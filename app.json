@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "my-app",
+    "name": "RapidX",
     "slug": "my-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -22,6 +22,19 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e27538dc-40f3-4556-9dda-1fb35a807754"
+      }
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ]
+    ]
   }
 }
