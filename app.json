@@ -4,10 +4,10 @@
     "slug": "my-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/SplashScreen.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -15,10 +15,19 @@
       "supportsTablet": true
     },
     "android": {
+      
+      "googleServicesFile": "./google-services.json",
+      "package": "com.fuvay.RapidX",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#ffffff"
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAFtCeCUYm6K1QXujT_m17aRvbC9hRxr2k"
+        }
       }
+      
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -29,6 +38,9 @@
       }
     },
     "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "@react-native-firebase/crashlytics",
       [
         "expo-location",
         {

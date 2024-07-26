@@ -6,15 +6,22 @@ import {
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import IconButton from "../ui/IconButton";
+import IconButton from "../../ui/IconButton";
 import { useContext, useEffect, useState } from "react";
-import getAddress from "../../util/location";
-import { LocationContext } from "../store/LocationContext";
+import getAddress from "../../../util/location";
+import { LocationContext } from "../../store/LocationContext";
+import { useNavigation } from "@react-navigation/native";
 
 
-export default function MainHeader() {
+interface MainHeaderProps {
+  onPress : ()=>void
+}
+
+
+export default function MainHeader({onPress} : MainHeaderProps) {
   const { pickedLocation, location } = useContext(LocationContext);
   const [TEXT, setTEXT] = useState<string>("Your Current Location");
+  const navigation = useNavigation() as any
 
   useEffect(() => {
     async function fetchAddress() {
@@ -37,16 +44,22 @@ export default function MainHeader() {
     fetchAddress();
   }, [pickedLocation, location]);
 
+  function favouriteHandler(){
+    
+  };
+  
+
   return (
     <View style={styles.root}>
       <View style={styles.btn}>
-        <IconButton name="menu" size={28} color={"grey"} />
+        <IconButton name="menu" size={28} color={"grey"} onPress={()=>navigation.navigate('Drawer')}/>
       </View>
       <Pressable
         style={({ pressed }) => [
           styles.input,
           pressed && { backgroundColor: "#c9c3c3" },
         ]}
+        onPress={onPress}
       >
         <View style={styles.locationContainer}>
           <Ionicons name="location" size={22} color={"green"} />
@@ -65,7 +78,7 @@ export default function MainHeader() {
         </View>
 
         <View style={{ width: 28, borderRadius: 15 }}>
-          <IconButton name="heart-outline" color="grey" size={24} />
+          <IconButton name="heart-outline" color="grey" size={24} onPress={favouriteHandler}/>
         </View>
       </Pressable>
     </View>

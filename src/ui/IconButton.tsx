@@ -5,11 +5,12 @@ interface IconPropsType {
   name: any;
   size: number;
   color: string;
+  onPress : ()=>void
 }
 
-export default function IconButton({ name, size, color }: IconPropsType) {
+export default function IconButton({ name, size, color, onPress }: IconPropsType) {
   return (
-    <TouchableOpacity activeOpacity={0.6}>
+    <TouchableOpacity activeOpacity={0.6} onPress={onPress}>
       <Ionicons name={name} size={size} color={color} />
     </TouchableOpacity>
   );

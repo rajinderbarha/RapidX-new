@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "277718245048",
+    "project_id": "rapidx-a4fef",
+    "storage_bucket": "rapidx-a4fef.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:277718245048:android:89f9e979eb5cf859d49e4d",
+        "android_client_info": {
+          "package_name": "com.fuvay.RapidX"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAhsfy2n-YduPhzB3VB2qAe7gwb8_y3jg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
