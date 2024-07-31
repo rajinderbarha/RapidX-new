@@ -5,19 +5,23 @@ import BottomModalContent from "./BottomModalContent";
 
 interface BottomModalProps {
   onChange: (index: number) => void;
+  isFocused: boolean;
 }
 
-export default function CustomBottomModal({ onChange }: BottomModalProps) {
+export default function CustomBottomModal({ onChange, isFocused }: BottomModalProps) {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const snapPoints = useMemo(() => ["15%", "60%", "99%"], []);
 
-  useEffect(() => {
-    const openModal = () => {
-      bottomSheetModalRef.current?.present();
-    };
-
-    openModal();
+  const openModal = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+    bottomSheetModalRef.current?.snapToIndex(0);
   }, []);
+
+  useEffect(() => {
+    if (isFocused) {
+      openModal();
+    }
+  }, [isFocused, openModal]);
 
   return (
     <BottomSheetModal
@@ -42,8 +46,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#f1f1f1",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    borderWidth : 10,
-    borderColor : "#ffffff"
+    borderWidth: 10,
+    borderColor: "#ffffff",
   },
   handleIndicator: {
     backgroundColor: "#a3a3a3",
@@ -53,10 +57,7 @@ const styles = StyleSheet.create({
   },
   modal: {
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,

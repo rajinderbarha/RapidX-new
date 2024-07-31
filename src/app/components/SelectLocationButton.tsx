@@ -9,9 +9,9 @@ import {
 import { colors } from "../../../constants/colors";
 
 
-export default function SelectLocationButton({ style, name, TEXT }: any) {
+export default function SelectLocationButton({ style, name, TEXT, onPress }: any) {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress={onPress}>
       <View style={[styles.btn, style]}>
         <MaterialIcons name={name} size={26} color="black" />
         <Text style={{ fontSize: 18, fontWeight: 600, color : 'black' }}>{TEXT}</Text>

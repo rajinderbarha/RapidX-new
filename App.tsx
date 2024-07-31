@@ -13,6 +13,7 @@ import AuthContextProvider, { AuthContext } from "./src/store/AuthContext";
 import { useContext } from "react";
 import DrawerScreen from "./src/app/screens/DrawerScreen";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import SelectLocationScreen from './src/app/screens/SelectLocationsScreen';
 
 const Stack = createStackNavigator();
 
@@ -81,6 +82,11 @@ function AuthenticatedStack() {
         name="Drawer"
         component={DrawerScreen}
         options={{ presentation: "card" }}
+      />
+      <Stack.Screen
+        name="Locations"
+        component={SelectLocationScreen}
+        
       />
     </Stack.Navigator>
   );

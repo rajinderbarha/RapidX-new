@@ -5,7 +5,7 @@ import Map from "../components/Map";
 import MyLocationButton from "../../ui/MyLocationButton";
 import MapView from "react-native-maps";
 import { LocationContext } from "../../store/LocationContext";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import CustomBottomModal from "../components/CustomBottomModal";
 
@@ -18,7 +18,7 @@ export default function MainScreen() {
   const { location } = useContext(LocationContext);
   const mapRef = useRef<MapView>(null);
   const [buttonBottomPosition, setButtonBottomPosition] = useState(20);
-
+  const isFocused  = useIsFocused()
 
   const handleModalChange = useCallback((index : any) => {
     const modalHeight = index === 0 ? 0.30 : 0.6; // Update according to your snap points
@@ -38,22 +38,20 @@ export default function MainScreen() {
     }
   }
 
-  function press() {
-    navigation.navigate("Drop");
-  }
+ 
 
   return (
     <BottomSheetModalProvider>
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <MainHeader onPress={press} />
+        <MainHeader />
       </View>
       <View style={styles.mapContainer}>
         <Map location={location?.coords || null} reff={mapRef} />
       </View>
       <MyLocationButton onPress={myLocationButtonHandler} style={{bottom : buttonBottomPosition}} />
     </View>
-    <CustomBottomModal onChange={handleModalChange}/>
+    <CustomBottomModal onChange={handleModalChange} isFocused={isFocused}/>
     </BottomSheetModalProvider>
   );
 }

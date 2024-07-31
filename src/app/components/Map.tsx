@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { LocationContext } from "../../store/LocationContext";
+import getAddress from "../../../util/location";
 
 interface MapProps {
   location: {
@@ -18,10 +19,16 @@ const defaultRegion = {
   longitudeDelta: 0.0421,
 };
 
-export default function Map({ reff }: MapProps) {
+export default function Map({ reff, pickOnMap }: any) {
   const [initialRegion, setInitialRegion] = useState(defaultRegion);
-  const { pickedLocation, setPickedLocation, location } =
-    useContext(LocationContext);
+  const {
+    pickedLocation,
+    setPickedLocation,
+    location,
+    setDropLocation,
+    dropLocation,
+    setDropAddress,
+  } = useContext(LocationContext);
 
   useEffect(() => {
     if (location) {
@@ -34,6 +41,19 @@ export default function Map({ reff }: MapProps) {
     }
   }, [location]);
 
+  useEffect(() => {
+    async function fetchAddress() {
+      if (dropLocation) {
+        const address = await getAddress(
+          dropLocation.latitude,
+          dropLocation.longitude
+        );
+        setDropAddress(address);
+      }
+    }
+    fetchAddress();
+  }, [dropLocation]);
+
   function locationPicker(event: any) {
     setPickedLocation({
       latitude: event.nativeEvent.coordinate.latitude,
@@ -42,18 +62,26 @@ export default function Map({ reff }: MapProps) {
     console.log("Pressed");
   }
 
+  function dropLocationPicker(event: any) {
+    setDropLocation({
+      latitude: event.nativeEvent.coordinate.latitude,
+      longitude: event.nativeEvent.coordinate.longitude,
+    });
+    console.log("Dropp");
+  }
+
   return (
     <View style={styles.container}>
       <MapView
         style={styles.map}
         region={initialRegion}
-        onPress={locationPicker}
+        onPress={pickOnMap ? dropLocationPicker : locationPicker}
         showsUserLocation={true}
         followsUserLocation={true}
         showsMyLocationButton={false}
         ref={reff}
         showsBuildings={false}
-        onMarkerPress={() => setPickedLocation(null)}
+        onMarkerPress={pickOnMap ? ()=>setDropLocation(null) : ()=>setPickedLocation(null)}
         userLocationUpdateInterval={1000}
         moveOnMarkerPress={false}
       >
@@ -63,6 +91,15 @@ export default function Map({ reff }: MapProps) {
             coordinate={{
               latitude: pickedLocation.latitude,
               longitude: pickedLocation.longitude,
+            }}
+          />
+        )}
+        {dropLocation && (
+          <Marker
+            pinColor="red"
+            coordinate={{
+              latitude: dropLocation?.latitude,
+              longitude: dropLocation?.longitude,
             }}
           />
         )}

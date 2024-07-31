@@ -1,27 +1,22 @@
 import {
   Pressable,
   StyleSheet,
-  Text,
-  TouchableOpacity,
+  Text, 
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import IconButton from "../../ui/IconButton";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import getAddress from "../../../util/location";
 import { LocationContext } from "../../store/LocationContext";
 import { useNavigation } from "@react-navigation/native";
 
 
-interface MainHeaderProps {
-  onPress : ()=>void
-}
 
-
-export default function MainHeader({onPress} : MainHeaderProps) {
-  const { pickedLocation, location } = useContext(LocationContext);
-  const [TEXT, setTEXT] = useState<string>("Your Current Location");
-  const navigation = useNavigation() as any
+export default function MainHeader() {
+  const { pickedLocation, location, pickupAddress, setPickupAddress } =
+    useContext(LocationContext);
+  const navigation = useNavigation() as any;
 
   useEffect(() => {
     async function fetchAddress() {
@@ -29,37 +24,42 @@ export default function MainHeader({onPress} : MainHeaderProps) {
         const address = await getAddress(
           pickedLocation.latitude,
           pickedLocation.longitude
-         
         );
-        setTEXT(address);
-      } else if(location) {
+        setPickupAddress(address);
+      } else if (location) {
         const address = await getAddress(
           location?.coords.latitude,
           location?.coords.longitude
         );
-        setTEXT(address);
+        setPickupAddress(address);
       }
     }
 
     fetchAddress();
   }, [pickedLocation, location]);
 
-  function favouriteHandler(){
-    
-  };
-  
+  function favouriteHandler() {}
+
+  function locationPressHandler() {
+    navigation.navigate("Drop");
+  }
 
   return (
     <View style={styles.root}>
       <View style={styles.btn}>
-        <IconButton name="menu" size={28} color={"grey"} onPress={()=>navigation.navigate('Drawer')}/>
+        <IconButton
+          name="menu"
+          size={28}
+          color={"grey"}
+          onPress={() => navigation.navigate("Drawer")}
+        />
       </View>
       <Pressable
         style={({ pressed }) => [
           styles.input,
           pressed && { backgroundColor: "#c9c3c3" },
         ]}
-        onPress={onPress}
+        onPress={locationPressHandler}
       >
         <View style={styles.locationContainer}>
           <Ionicons name="location" size={22} color={"green"} />
@@ -73,12 +73,17 @@ export default function MainHeader({onPress} : MainHeaderProps) {
               maxWidth: "85%",
             }}
           >
-            {TEXT}
+            {pickupAddress}
           </Text>
         </View>
 
         <View style={{ width: 28, borderRadius: 15 }}>
-          <IconButton name="heart-outline" color="grey" size={24} onPress={favouriteHandler}/>
+          <IconButton
+            name="heart-outline"
+            color="grey"
+            size={24}
+            onPress={favouriteHandler}
+          />
         </View>
       </Pressable>
     </View>

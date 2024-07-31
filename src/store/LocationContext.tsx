@@ -5,6 +5,12 @@ interface LocationContextType {
   location: Location.LocationObject | null;
   pickedLocation: MarkerProps | null;
   setPickedLocation: (location: MarkerProps | null) => void;
+  dropLocation: MarkerProps | null;
+  setDropLocation: (location: MarkerProps | null) => void;
+  pickupAddress: string;
+  setPickupAddress: (address: string) => void;
+  dropAddress: string;
+  setDropAddress: (address: string) => void;
 }
 
 interface MarkerProps {
@@ -16,6 +22,12 @@ export const LocationContext = createContext<LocationContextType>({
   location: null,
   pickedLocation: null,
   setPickedLocation: () => {},
+  dropLocation: null,
+  setDropLocation: () => {},
+  pickupAddress: "",
+  setPickupAddress: () => {},
+  dropAddress: "",
+  setDropAddress: () => {},
 });
 
 export default function LocationContextProvider({
@@ -27,7 +39,15 @@ export default function LocationContextProvider({
   const [pickedLocation, setPickedLocation] = useState<MarkerProps | null>(
     null
   );
+
+  const [dropLocation, setDropLocation] = useState<MarkerProps | null>(null);
+
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const [pickupAddress, setPickupAddress] = useState("");
+  
+  const [dropAddress, setDropAddress] = useState("");
+
 
   useEffect(() => {
     async function fetchLocation() {
@@ -46,7 +66,6 @@ export default function LocationContextProvider({
     fetchLocation();
   }, []);
 
-  
   useEffect(() => {
     async function startWatchingPosition() {
       const sub = await Location.watchPositionAsync(
@@ -74,7 +93,17 @@ export default function LocationContextProvider({
 
   return (
     <LocationContext.Provider
-      value={{ location, pickedLocation, setPickedLocation }}
+      value={{
+        location,
+        pickedLocation,
+        setPickedLocation,
+        dropLocation,
+        setDropLocation,
+        pickupAddress,
+        setPickupAddress,
+        dropAddress,
+        setDropAddress
+      }}
     >
       {children}
     </LocationContext.Provider>
