@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import OrangeButton from "../../ui/OrangeButton";
 import { AuthContext } from "../../store/AuthContext";
+import {  } from "../../../util/location";
 
 export default function AuthScreen() {
   const [countryCode, setCountryCode] = useState<string>("+91");
@@ -68,9 +69,9 @@ export default function AuthScreen() {
   
   const handleConfirmOtp = async () => {
     try {
-      await confirmOtp(otp);
+       confirmOtp(otp);
     } catch (error) {
-      console.log("Invalid code.");
+      console.log("Invalid code. otp");
     }
   };
 

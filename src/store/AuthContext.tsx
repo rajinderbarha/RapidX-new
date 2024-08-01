@@ -55,7 +55,14 @@ export default function AuthContextProvider({ children }: PropsWithChildren) {
 
   async function confirmOtp(otp : string) {
     try {
-      await confirm.confirm(otp);
+      const userCredential  = await confirm.confirm(otp);
+      // const idToken = await userCredential.user.getIdToken()
+      // const session = await userCredential
+      // const user =  await userCredential.user
+      // console.log('cofxx : ', idToken)
+      // console.log('session : ', session)
+      // console.log('user : ', user)
+
     } catch (error) {
       console.log("Invalid code.");
     }

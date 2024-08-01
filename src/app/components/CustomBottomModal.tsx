@@ -1,27 +1,37 @@
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useNavigation } from "@react-navigation/native";
+import React, { PropsWithChildren, useCallback, useEffect, useMemo, useRef } from "react";
 import { StyleSheet } from "react-native";
-import BottomModalContent from "./BottomModalContent";
+import { SharedValue } from "react-native-reanimated";
 
 interface BottomModalProps {
   onChange: (index: number) => void;
   isFocused: boolean;
+  children: React.ReactNode;
+  snapPoints : (string | number)[] | SharedValue<(string | number)[]>
 }
 
-export default function CustomBottomModal({ onChange, isFocused }: BottomModalProps) {
+export default function CustomBottomModal({
+  onChange,
+  isFocused,
+  children,
+  snapPoints
+}: PropsWithChildren<BottomModalProps>) {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ["15%", "60%", "99%"], []);
+  
 
-  const openModal = useCallback(() => {
+  const navigation = useNavigation();
+
+  const openModal =() => {
     bottomSheetModalRef.current?.present();
     bottomSheetModalRef.current?.snapToIndex(0);
-  }, []);
+  };
 
   useEffect(() => {
     if (isFocused) {
       openModal();
     }
-  }, [isFocused, openModal]);
+  }, [isFocused, openModal, navigation]);
 
   return (
     <BottomSheetModal
@@ -35,7 +45,7 @@ export default function CustomBottomModal({ onChange, isFocused }: BottomModalPr
       style={styles.modal}
     >
       <BottomSheetView style={styles.contentContainer}>
-        <BottomModalContent />
+        {children}
       </BottomSheetView>
     </BottomSheetModal>
   );

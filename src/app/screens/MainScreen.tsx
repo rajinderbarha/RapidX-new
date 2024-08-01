@@ -8,6 +8,7 @@ import { LocationContext } from "../../store/LocationContext";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import CustomBottomModal from "../components/CustomBottomModal";
+import MainScreenModal from "../components/MainScreenModal";
 
 
 
@@ -51,7 +52,7 @@ export default function MainScreen() {
       </View>
       <MyLocationButton onPress={myLocationButtonHandler} style={{bottom : buttonBottomPosition}} />
     </View>
-    <CustomBottomModal onChange={handleModalChange} isFocused={isFocused}/>
+    <MainScreenModal onChange={handleModalChange} isFocused={isFocused}/>
     </BottomSheetModalProvider>
   );
 }

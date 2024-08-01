@@ -11,11 +11,21 @@ import AuthScreen from "./src/auth/screens/AuthScreen";
 import SelectLocationButton from "./src/app/components/SelectLocationButton";
 import AuthContextProvider, { AuthContext } from "./src/store/AuthContext";
 import { useContext } from "react";
-import DrawerScreen from "./src/app/screens/DrawerScreen";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import SelectLocationScreen from './src/app/screens/SelectLocationsScreen';
+import {createDrawerNavigator} from '@react-navigation/drawer'
+import PaymentScreen from './src/app/screens/DrawerScreens/Payment';
+import AboutUsScreen from './src/app/screens/DrawerScreens/AboutUs';
+import TermsConditionsScreen from './src/app/screens/DrawerScreens/TermsConditions';
+import PrivacyPolicyScreen from './src/app/screens/DrawerScreens/PrivacyPolicy';
+import ContactUsScreen from './src/app/screens/DrawerScreens/ContactUs';
+import CustomDrawerContent from './src/app/components/CustomDrawerContent';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+
+
 
 const Stack = createStackNavigator();
+const Drawer = createDrawerNavigator();
 
 function AuthStack() {
   return (
@@ -60,6 +70,7 @@ function AuthStack() {
 
 function AuthenticatedStack() {
   return (
+    
     <Stack.Navigator
       initialRouteName="Main"
       screenOptions={{
@@ -78,19 +89,31 @@ function AuthenticatedStack() {
         component={PickAndDropScreen}
         options={{ presentation: "modal" }}
       />
-      <Stack.Screen
-        name="Drawer"
-        component={DrawerScreen}
-        options={{ presentation: "card" }}
-      />
+     
       <Stack.Screen
         name="Locations"
         component={SelectLocationScreen}
         
       />
     </Stack.Navigator>
+    
   );
 }
+
+
+function DrawerNavigator(){
+  return(
+    <Drawer.Navigator drawerContent={(props)=><CustomDrawerContent {...props} />  }  >
+      <Drawer.Screen name='Home' component={AuthenticatedStack} options={{headerShown : false}} />
+      <Drawer.Screen name='Payment' component={PaymentScreen}  />
+      <Drawer.Screen name='About Us' component={AboutUsScreen} />
+      <Drawer.Screen name='Terms & Conditions' component={TermsConditionsScreen} />
+      <Drawer.Screen name='Privacy Policy' component={PrivacyPolicyScreen} />
+      <Drawer.Screen name='Contact Us' component={ContactUsScreen} />
+    </Drawer.Navigator>
+  )
+}
+
 
 function Navigation() {
   const { user } = useContext(AuthContext);
@@ -98,7 +121,7 @@ function Navigation() {
     <NavigationContainer>
       <StatusBar style="auto" />
       {!user && <AuthStack />}
-    {user && <AuthenticatedStack />}
+    {user && <DrawerNavigator />}
     </NavigationContainer>
   );
 }

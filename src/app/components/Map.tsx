@@ -1,8 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Alert, Dimensions, StyleSheet, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { LocationContext } from "../../store/LocationContext";
 import getAddress from "../../../util/location";
+// import { MapViewRoute } from "react-native-maps-routes";
+import MapViewDirections from "react-native-maps-directions";
+import AddMarker from "./Marker";
+import AddMapViewDirections from "./MapViewDirections";
+
+const GOOGLE_API_kEY = "AIzaSyCV2NRNl0uVeY37ID1gIoYgJexr9SBDn2Q";
+const { width, height } = Dimensions.get("window");
+
+const ASPECT_RATIO = width / height;
+const LATITUDE_DELTA = 0.0922;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 interface MapProps {
   location: {
@@ -15,8 +26,8 @@ interface MapProps {
 const defaultRegion = {
   latitude: 30.705085033867647,
   longitude: 76.71419969935869,
-  latitudeDelta: 0.0922,
-  longitudeDelta: 0.0421,
+  latitudeDelta: LATITUDE_DELTA,
+  longitudeDelta: LONGITUDE_DELTA,
 };
 
 export default function Map({ reff, pickOnMap }: any) {
@@ -35,8 +46,8 @@ export default function Map({ reff, pickOnMap }: any) {
       setInitialRegion({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA,
       });
     }
   }, [location]);
@@ -74,35 +85,33 @@ export default function Map({ reff, pickOnMap }: any) {
     <View style={styles.container}>
       <MapView
         style={styles.map}
-        region={initialRegion}
+        initialRegion={initialRegion}
         onPress={pickOnMap ? dropLocationPicker : locationPicker}
         showsUserLocation={true}
         followsUserLocation={true}
         showsMyLocationButton={false}
         ref={reff}
         showsBuildings={false}
-        onMarkerPress={pickOnMap ? ()=>setDropLocation(null) : ()=>setPickedLocation(null)}
-        userLocationUpdateInterval={1000}
+        onMarkerPress={
+          pickOnMap
+            ? () => setDropLocation(null)
+            : () => setPickedLocation(null)
+        }
+        userLocationUpdateInterval={5000}
         moveOnMarkerPress={false}
       >
+        {location && dropLocation && (
+          <AddMapViewDirections
+            reff={reff}
+            origin={location?.coords}
+            destination={dropLocation}
+          />
+        )}
+
         {pickedLocation && (
-          <Marker
-            pinColor={"#1979e7"}
-            coordinate={{
-              latitude: pickedLocation.latitude,
-              longitude: pickedLocation.longitude,
-            }}
-          />
+          <AddMarker color={"#1979e7"} location={pickedLocation} />
         )}
-        {dropLocation && (
-          <Marker
-            pinColor="red"
-            coordinate={{
-              latitude: dropLocation?.latitude,
-              longitude: dropLocation?.longitude,
-            }}
-          />
-        )}
+        {dropLocation && <AddMarker color={"red"} location={dropLocation} />}
       </MapView>
     </View>
   );

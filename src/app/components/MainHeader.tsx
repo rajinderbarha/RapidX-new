@@ -44,6 +44,8 @@ export default function MainHeader() {
     navigation.navigate("Drop");
   }
 
+  
+
   return (
     <View style={styles.root}>
       <View style={styles.btn}>
@@ -51,7 +53,7 @@ export default function MainHeader() {
           name="menu"
           size={28}
           color={"grey"}
-          onPress={() => navigation.navigate("Drawer")}
+          onPress={() => navigation.toggleDrawer()}
         />
       </View>
       <Pressable

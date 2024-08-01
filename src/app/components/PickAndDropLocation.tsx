@@ -95,11 +95,17 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     flexDirection: "row",
     height: 230,
-    marginHorizontal: 18,
+    alignSelf : 'center',
+    // marginHorizontal: 18,
     borderRadius: 22,
     overflow: "hidden",
     elevation: 7,
     marginTop: 2,
+    position : 'absolute',
+    top : 0,
+    width : '95%',
+    zIndex : 100,
+
   },
   imageContainer: {
     flex: 1,
