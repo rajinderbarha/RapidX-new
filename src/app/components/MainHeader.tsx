@@ -26,13 +26,14 @@ export default function MainHeader() {
           pickedLocation.longitude
         );
         setPickupAddress(address);
-      } else if (location) {
-        const address = await getAddress(
-          location?.coords.latitude,
-          location?.coords.longitude
-        );
-        setPickupAddress(address);
       }
+        //  else if (location) {
+      //   const address = await getAddress(
+      //     location?.coords.latitude,
+      //     location?.coords.longitude
+      //   );
+      //   setPickupAddress(address);
+      // }
     }
 
     fetchAddress();

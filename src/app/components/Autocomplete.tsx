@@ -45,8 +45,6 @@ export default function AutoComplete() {
           onPress={(data, details) => {
             const placeID = details?.place_id;
             placeID && setPlaceId(placeID);
-            console.log("Selected place data:", data);
-            console.log("Place details:", details);
           }}
           query={{
             key: "AIzaSyCV2NRNl0uVeY37ID1gIoYgJexr9SBDn2Q",

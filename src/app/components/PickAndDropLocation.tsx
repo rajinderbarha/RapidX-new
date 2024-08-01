@@ -8,10 +8,7 @@ import {
 } from "react-native";
 import { useContext, useEffect, useRef, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
-import {
-  GooglePlacesAutocomplete,
-  GooglePlacesAutocompleteRef,
-} from "react-native-google-places-autocomplete";
+import {  GooglePlacesAutocompleteRef} from "react-native-google-places-autocomplete";
 import { LocationContext } from "../../store/LocationContext";
 
 interface DropProps {
@@ -19,13 +16,10 @@ interface DropProps {
   setPickOnMap: (prevState: boolean) => void;
 }
 
-export default function PickAndDropLocation({
-  pickOnMap,
-  setPickOnMap,
-}: DropProps) {
+export default function PickAndDropLocation() {
   const ref = useRef<GooglePlacesAutocompleteRef>(null);
   const navigation = useNavigation<any>();
-  const { pickupAddress, dropAddress } = useContext(LocationContext);
+  const { pickupAddress, dropAddress, pickedLocation } = useContext(LocationContext);
 
   useEffect(() => {
     ref.current?.setAddressText(dropAddress);
@@ -37,6 +31,16 @@ export default function PickAndDropLocation({
     },
     [navigation]
   );
+
+  const truncateAddress = (address : string, maxLength = 48) => {
+    if (address.length > maxLength) {
+      return address.slice(0, maxLength) + '...'; // Append ellipsis if truncated
+    }
+    return address;
+  };
+
+  const truncatedPickupAddress = truncateAddress(pickupAddress)
+  const truncatedDropAddress = truncateAddress(dropAddress)
 
   return (
     <View style={styles.rootContainer}>
@@ -63,7 +67,7 @@ export default function PickAndDropLocation({
               placeholderTextColor="#00C92C"
               style={[styles.inputs, styles.inputBackground]}
               cursorColor="black"
-              value={pickupAddress}
+              value={truncatedPickupAddress}
               editable={false}
             />
           </Pressable>
@@ -78,7 +82,7 @@ export default function PickAndDropLocation({
               placeholder="Drop Location"
               style={styles.inputs}
               cursorColor="black"
-              value={dropAddress}
+              value={truncatedDropAddress}
               editable={false}
             />
           </Pressable>

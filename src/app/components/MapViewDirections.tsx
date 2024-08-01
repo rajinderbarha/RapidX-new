@@ -1,5 +1,7 @@
+import { useContext } from "react";
 import { Dimensions } from "react-native";
 import MapViewDirections from "react-native-maps-directions";
+import { LocationContext } from "../../store/LocationContext";
 
 
 
@@ -22,6 +24,10 @@ interface DirectionProps {
 
 
 export default function AddMapViewDirections({origin, destination, reff} : DirectionProps){
+
+  const {setDistance} = useContext(LocationContext)
+
+
   return (
     <MapViewDirections
     origin={{
@@ -43,6 +49,8 @@ export default function AddMapViewDirections({origin, destination, reff} : Direc
         );
       }}
       onReady={(result) => {
+        const distance = result.distance.toFixed(2)
+        setDistance(distance)
         console.log(`Distance: ${result.distance} km`);
         console.log(`Duration: ${result.duration} min.`);
 

@@ -29,7 +29,6 @@ export default function MainScreen() {
 
   function myLocationButtonHandler() {
     if (location && mapRef.current) {
-      console.log("Pressed");
       mapRef.current.animateToRegion({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,

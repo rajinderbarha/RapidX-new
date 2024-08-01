@@ -25,7 +25,6 @@ export default function AuthScreen() {
 
   useEffect(() => {
     setPhoneNumber(`${countryCode}${phoneNumberInput}`);
-    console.log("Combined Phone Number: ", phoneNumber);
   }, [countryCode, phoneNumberInput]);
 
   

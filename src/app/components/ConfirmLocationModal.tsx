@@ -1,17 +1,51 @@
 import { View, StyleSheet, Text } from "react-native";
 import CustomBottomModal from "./CustomBottomModal";
 import OrangeButton from "../../ui/OrangeButton";
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
+import { LocationContext } from "../../store/LocationContext";
 
 interface BottomModalProps {
     onChange: (index: number) => void;
     isFocused: boolean;
 }
 
+interface FareDetails {
+    baseFare: number; // Base fare for the ride
+    costPerKm: number; // Cost per kilometer
+    distance: any; // Distance of the ride in kilometers
+    additionalFees?: number; // Any additional fees (optional)
+    discount?: number; // Any discount (optional)
+  }
+
 export default function ConfirmLocationModal({ isFocused, onChange }: BottomModalProps) {
     // Dummy data for distance and price
-    const distance = "5 km";
-    const price = "$10";
+
+    const {distance} = useContext(LocationContext)
+    const baseFare = 25; 
+    const costPerKm = 9;
+
+
+
+
+    function calculateFare({
+        baseFare,
+        costPerKm,
+        distance,
+        additionalFees = 0,
+        discount = 0,
+      }: FareDetails): number {
+        // Calculate the total fare
+        const totalFare = baseFare + costPerKm * distance + additionalFees - discount;
+        
+        // Ensure the fare is not negative
+        return Math.max(totalFare, 0);
+      }
+
+
+
+   
+
+    const price = calculateFare({baseFare, costPerKm, distance}).toFixed(0) ;
 
 const snapPoints = useMemo(() => ["20%", "25%"], []);
 
@@ -21,11 +55,11 @@ const snapPoints = useMemo(() => ["20%", "25%"], []);
                 <View style={styles.detailsContainer}>
                     <View style={styles.detailItem}>
                         <Text style={styles.detailLabel}>Distance</Text>
-                        <Text style={styles.detailValue}>{distance}</Text>
+                        <Text style={styles.detailValue}>{distance} km</Text>
                     </View>
                     <View style={styles.detailItem}>
                         <Text style={styles.detailLabel}>Price</Text>
-                        <Text style={styles.detailValue}>{price}</Text>
+                        <Text style={styles.detailValue}>{price} ₹</Text>
                     </View>
                 </View>
                 <View style={styles.buttonContainer}>

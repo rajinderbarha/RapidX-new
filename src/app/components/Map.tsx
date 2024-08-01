@@ -70,7 +70,6 @@ export default function Map({ reff, pickOnMap }: any) {
       latitude: event.nativeEvent.coordinate.latitude,
       longitude: event.nativeEvent.coordinate.longitude,
     });
-    console.log("Pressed");
   }
 
   function dropLocationPicker(event: any) {
@@ -100,10 +99,10 @@ export default function Map({ reff, pickOnMap }: any) {
         userLocationUpdateInterval={5000}
         moveOnMarkerPress={false}
       >
-        {location && dropLocation && (
+        {pickedLocation && dropLocation && (
           <AddMapViewDirections
             reff={reff}
-            origin={location?.coords}
+            origin={pickedLocation}
             destination={dropLocation}
           />
         )}
