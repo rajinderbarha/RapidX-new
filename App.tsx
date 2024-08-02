@@ -22,6 +22,7 @@ import CustomDrawerContent from "./src/app/components/CustomDrawerContent";
 import SelectLocationButton from "./src/app/components/SelectLocationButton";
 import AuthContextProvider, { AuthContext } from "./src/store/AuthContext";
 import LocationContextProvider from "./src/store/LocationContext";
+import CustomBackButton from "./src/ui/CustomBackButton";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -68,7 +69,9 @@ function AuthenticatedStack() {
       <Stack.Screen
         name="Drop"
         component={PickAndDropScreen}
-        options={{ presentation: "modal" }}
+        options={{ presentation: "modal",
+          headerLeft: () => <CustomBackButton />
+         }}
       />
       <Stack.Screen name="Locations" component={SelectLocationScreen} />
     </Stack.Navigator>

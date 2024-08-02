@@ -1,11 +1,11 @@
-import React, { useCallback, useContext, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import MainHeader from "../components/MainHeader";
 import Map from "../components/Map";
 import MyLocationButton from "../../ui/MyLocationButton";
 import MapView from "react-native-maps";
 import { LocationContext } from "../../store/LocationContext";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import CustomBottomModal from "../components/CustomBottomModal";
 import MainScreenModal from "../components/MainScreenModal";
@@ -16,7 +16,7 @@ const {height} = Dimensions.get('screen')
 
 export default function MainScreen() {
   const navigation = useNavigation() as any;
-  const { location } = useContext(LocationContext);
+  const { location, reset } = useContext(LocationContext);
   const mapRef = useRef<MapView>(null);
   const [buttonBottomPosition, setButtonBottomPosition] = useState(20);
   const isFocused  = useIsFocused()
@@ -25,6 +25,7 @@ export default function MainScreen() {
     const modalHeight = index === 0 ? 0.30 : 0.6; // Update according to your snap points
     setButtonBottomPosition(modalHeight * height + 20); // Adjust button position based on modal height
   }, []);
+
 
 
   function myLocationButtonHandler() {

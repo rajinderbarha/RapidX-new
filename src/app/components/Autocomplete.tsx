@@ -4,12 +4,14 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 import SelectLocationButton from "./SelectLocationButton";
 import { LocationContext } from "../../store/LocationContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { getCoords } from "../../../util/location";
+import getAddress, { getCoords } from "../../../util/location";
+import MyLocationButton from "../../ui/MyLocationButton";
 
 export default function AutoComplete() {
-  const ref = useRef(null);
+  const ref = useRef<any>(null);
   const [placeId, setPlaceId] = useState("");
-  const { setDropLocation, setPickedLocation } = useContext(LocationContext);
+  const { setDropLocation, setPickedLocation, location, setDropAddress, setPickupAddress } =
+    useContext(LocationContext);
   const navigation = useNavigation();
   const route = useRoute();
   const { field }: any = route.params;
@@ -47,10 +49,24 @@ export default function AutoComplete() {
     navigation.goBack();
   }
 
+  async function fetchCurrentLocation() {
+    if (location) {
+      const currentLocation = await getAddress(
+        location?.coords.latitude,
+        location?.coords.longitude
+      );
+      ref.current?.setAddressText(currentLocation);
+      setPickedLocation(location.coords);
+      setPickupAddress(currentLocation);
+    }
+  }
+
+  const label = field === "pickup" ? "From" : "Where to";
+
   return (
     <>
       <View style={styles.container}>
-        <Text style={styles.title}>Where To</Text>
+        <Text style={styles.title}>{label}</Text>
         <GooglePlacesAutocomplete
           ref={ref}
           styles={autocompleteStyles}
@@ -58,13 +74,18 @@ export default function AutoComplete() {
           onPress={(data, details = null) => {
             const placeID = details?.place_id;
             placeID && setPlaceId(placeID);
+            console.log(details);
           }}
           query={query}
         />
+
+        {field === "pickup" && (
+          <MyLocationButton onPress={fetchCurrentLocation} />
+        )}
       </View>
       <View>
         <SelectLocationButton
-        iconName={""}
+          iconName={""}
           style={styles.selectButton}
           text="Select Location"
           onPress={selectLocationHandler}

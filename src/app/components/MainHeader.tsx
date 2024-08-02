@@ -57,7 +57,7 @@ export default function MainHeader() {
             ellipsizeMode="tail"
             style={styles.pickupAddress}
           >
-            {pickupAddress}
+            {pickupAddress || "Select a location"}
           </Text>
         </View>
         <View style={styles.iconButtonContainer}>
