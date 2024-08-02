@@ -1,22 +1,15 @@
-import {
-  Pressable,
-  StyleSheet,
-  Text, 
-  View,
-} from "react-native";
+import React, { useContext, useEffect } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import IconButton from "../../ui/IconButton";
-import { useContext, useEffect } from "react";
 import getAddress from "../../../util/location";
 import { LocationContext } from "../../store/LocationContext";
 import { useNavigation } from "@react-navigation/native";
 
-
-
 export default function MainHeader() {
   const { pickedLocation, location, pickupAddress, setPickupAddress } =
     useContext(LocationContext);
-  const navigation = useNavigation() as any;
+  const navigation = useNavigation<any>();
 
   useEffect(() => {
     async function fetchAddress() {
@@ -27,25 +20,18 @@ export default function MainHeader() {
         );
         setPickupAddress(address);
       }
-        //  else if (location) {
-      //   const address = await getAddress(
-      //     location?.coords.latitude,
-      //     location?.coords.longitude
-      //   );
-      //   setPickupAddress(address);
-      // }
     }
 
     fetchAddress();
-  }, [pickedLocation, location]);
+  }, [pickedLocation]);
 
-  function favouriteHandler() {}
+  function favouriteHandler() {
+    // Handle favourite action here
+  }
 
   function locationPressHandler() {
     navigation.navigate("Drop");
   }
-
-  
 
   return (
     <View style={styles.root}>
@@ -53,34 +39,28 @@ export default function MainHeader() {
         <IconButton
           name="menu"
           size={28}
-          color={"grey"}
+          color="grey"
           onPress={() => navigation.toggleDrawer()}
         />
       </View>
       <Pressable
         style={({ pressed }) => [
           styles.input,
-          pressed && { backgroundColor: "#c9c3c3" },
+          pressed && styles.pressedInput,
         ]}
         onPress={locationPressHandler}
       >
         <View style={styles.locationContainer}>
-          <Ionicons name="location" size={22} color={"green"} />
+          <Ionicons name="location" size={22} color="green" />
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
-            style={{
-              color: "grey",
-              fontWeight: "600",
-              fontSize: 16,
-              maxWidth: "85%",
-            }}
+            style={styles.pickupAddress}
           >
             {pickupAddress}
           </Text>
         </View>
-
-        <View style={{ width: 28, borderRadius: 15 }}>
+        <View style={styles.iconButtonContainer}>
           <IconButton
             name="heart-outline"
             color="grey"
@@ -95,17 +75,12 @@ export default function MainHeader() {
 
 const styles = StyleSheet.create({
   root: {
-    // backgroundColor : '#e4e1395b',
     flexDirection: "row",
     paddingHorizontal: 15,
     justifyContent: "center",
-    // height : 48,
     alignItems: "center",
-
-    // elevation : 1,
     zIndex: 1,
   },
-
   input: {
     height: 43,
     backgroundColor: "#ffffff",
@@ -118,6 +93,9 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     paddingHorizontal: 10,
     overflow: "hidden",
+  },
+  pressedInput: {
+    backgroundColor: "#c9c3c3",
   },
   btn: {
     height: 39,
@@ -133,5 +111,15 @@ const styles = StyleSheet.create({
     gap: 10,
     flex: 1,
     alignItems: "center",
+  },
+  pickupAddress: {
+    color: "grey",
+    fontWeight: "600",
+    fontSize: 16,
+    maxWidth: "85%",
+  },
+  iconButtonContainer: {
+    width: 28,
+    borderRadius: 15,
   },
 });

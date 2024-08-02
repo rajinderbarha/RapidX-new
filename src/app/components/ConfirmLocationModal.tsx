@@ -1,7 +1,7 @@
 import { View, StyleSheet, Text } from "react-native";
 import CustomBottomModal from "./CustomBottomModal";
 import OrangeButton from "../../ui/OrangeButton";
-import { useContext, useMemo } from "react";
+import { useContext, useMemo, useCallback } from "react";
 import { LocationContext } from "../../store/LocationContext";
 
 interface BottomModalProps {
@@ -15,39 +15,27 @@ interface FareDetails {
     distance: any; // Distance of the ride in kilometers
     additionalFees?: number; // Any additional fees (optional)
     discount?: number; // Any discount (optional)
-  }
+}
 
 export default function ConfirmLocationModal({ isFocused, onChange }: BottomModalProps) {
-    // Dummy data for distance and price
-
-    const {distance} = useContext(LocationContext)
-    const baseFare = 25; 
+    const { distance } = useContext(LocationContext);
+    const baseFare = 25;
     const costPerKm = 9;
 
-
-
-
-    function calculateFare({
+    const calculateFare = useCallback(({
         baseFare,
         costPerKm,
         distance,
         additionalFees = 0,
         discount = 0,
-      }: FareDetails): number {
-        // Calculate the total fare
+    }: FareDetails): number => {
         const totalFare = baseFare + costPerKm * distance + additionalFees - discount;
-        
-        // Ensure the fare is not negative
         return Math.max(totalFare, 0);
-      }
+    }, []);
 
+    const price = useMemo(() => calculateFare({ baseFare, costPerKm, distance }).toFixed(0), [calculateFare, baseFare, costPerKm, distance]);
 
-
-   
-
-    const price = calculateFare({baseFare, costPerKm, distance}).toFixed(0) ;
-
-const snapPoints = useMemo(() => ["20%", "25%"], []);
+    const snapPoints = useMemo(() => ["20%", "25%"], []);
 
     return (
         <CustomBottomModal isFocused={isFocused} onChange={onChange} snapPoints={snapPoints}>
@@ -63,7 +51,7 @@ const snapPoints = useMemo(() => ["20%", "25%"], []);
                     </View>
                 </View>
                 <View style={styles.buttonContainer}>
-                    <OrangeButton text={'Book Ride'} onPress={() => { }} />
+                    <OrangeButton text="Book Ride" onPress={() => { }} />
                 </View>
             </View>
         </CustomBottomModal>
@@ -73,7 +61,6 @@ const snapPoints = useMemo(() => ["20%", "25%"], []);
 const styles = StyleSheet.create({
     container: {
         padding: 20,
-        // alignItems: 'center',
     },
     detailsContainer: {
         marginBottom: 20,
@@ -94,8 +81,7 @@ const styles = StyleSheet.create({
         color: 'black',
     },
     buttonContainer: {
-        alignItems : 'center',
-        justifyContent : 'center'
-        
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 });

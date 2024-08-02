@@ -8,7 +8,7 @@ import { LocationContext } from "../../store/LocationContext";
 const GOOGLE_API_kEY = "AIzaSyCV2NRNl0uVeY37ID1gIoYgJexr9SBDn2Q";
 const { width, height } = Dimensions.get("window");
 
-const ASPECT_RATIO = width / height;
+
 
 interface DirectionProps {
     origin : {

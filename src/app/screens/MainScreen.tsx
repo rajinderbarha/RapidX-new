@@ -47,7 +47,7 @@ export default function MainScreen() {
         <MainHeader />
       </View>
       <View style={styles.mapContainer}>
-        <Map location={location?.coords || null} reff={mapRef} />
+        <Map pickOnMap={null} location={location?.coords || null} reff={mapRef} />
       </View>
       <MyLocationButton onPress={myLocationButtonHandler} style={{bottom : buttonBottomPosition}} />
     </View>

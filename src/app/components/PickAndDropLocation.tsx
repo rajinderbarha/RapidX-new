@@ -1,15 +1,8 @@
-import {
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
-import { useContext, useEffect, useRef, useCallback } from "react";
-import { useNavigation } from "@react-navigation/native";
-import {  GooglePlacesAutocompleteRef} from "react-native-google-places-autocomplete";
-import { LocationContext } from "../../store/LocationContext";
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import { Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { GooglePlacesAutocompleteRef } from 'react-native-google-places-autocomplete';
+import { LocationContext } from '../../store/LocationContext';
 
 interface DropProps {
   pickOnMap: boolean;
@@ -19,10 +12,12 @@ interface DropProps {
 export default function PickAndDropLocation() {
   const ref = useRef<GooglePlacesAutocompleteRef>(null);
   const navigation = useNavigation<any>();
-  const { pickupAddress, dropAddress, pickedLocation } = useContext(LocationContext);
+  const { pickupAddress, dropAddress } = useContext(LocationContext);
 
   useEffect(() => {
-    ref.current?.setAddressText(dropAddress);
+    if (dropAddress) {
+      ref.current?.setAddressText(dropAddress);
+    }
   }, [dropAddress]);
 
   const inputPressHandler = useCallback(
@@ -32,15 +27,12 @@ export default function PickAndDropLocation() {
     [navigation]
   );
 
-  const truncateAddress = (address : string, maxLength = 48) => {
-    if (address.length > maxLength) {
-      return address.slice(0, maxLength) + '...'; // Append ellipsis if truncated
-    }
-    return address;
+  const truncateAddress = (address: string, maxLength = 48) => {
+    return address.length > maxLength ? address.slice(0, maxLength) + '...' : address;
   };
 
-  const truncatedPickupAddress = truncateAddress(pickupAddress)
-  const truncatedDropAddress = truncateAddress(dropAddress)
+  const truncatedPickupAddress = truncateAddress(pickupAddress);
+  const truncatedDropAddress = truncateAddress(dropAddress);
 
   return (
     <View style={styles.rootContainer}>
@@ -99,17 +91,15 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     flexDirection: "row",
     height: 230,
-    alignSelf : 'center',
-    // marginHorizontal: 18,
+    alignSelf: 'center',
     borderRadius: 22,
     overflow: "hidden",
     elevation: 7,
     marginTop: 2,
-    position : 'absolute',
-    top : 0,
-    width : '95%',
-    zIndex : 100,
-
+    position: 'absolute',
+    top: 0,
+    width: '95%',
+    zIndex: 100,
   },
   imageContainer: {
     flex: 1,

@@ -11,8 +11,8 @@ interface LocationContextType {
   setPickupAddress: (address: string) => void;
   dropAddress: string;
   setDropAddress: (address: string) => void;
-  distance: string ;
-  setDistance: (distance : string)  => void;
+  distance: string;
+  setDistance: (distance: string) => void;
 }
 
 interface MarkerProps {
@@ -30,70 +30,68 @@ export const LocationContext = createContext<LocationContextType>({
   setPickupAddress: () => {},
   dropAddress: "",
   setDropAddress: () => {},
-  distance : "" ,
-  setDistance : ()=>{}
+  distance: "",
+  setDistance: () => {},
 });
 
 export default function LocationContextProvider({
   children,
 }: PropsWithChildren) {
-  const [location, setLocation] = useState<Location.LocationObject | null>(
-    null
-  );
-  const [pickedLocation, setPickedLocation] = useState<MarkerProps | null>(
-    null
-  );
-
+  const [location, setLocation] = useState<Location.LocationObject | null>(null);
+  const [pickedLocation, setPickedLocation] = useState<MarkerProps | null>(null);
   const [dropLocation, setDropLocation] = useState<MarkerProps | null>(null);
-
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
   const [pickupAddress, setPickupAddress] = useState("");
-  
   const [dropAddress, setDropAddress] = useState("");
-  
   const [distance, setDistance] = useState("");
-
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchLocation() {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        console.log("Error : ", errorMsg);
-        return;
-      }
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          setErrorMsg("Permission to access location was denied");
+          return;
+        }
 
-      let currentLocation = await Location.getCurrentPositionAsync();
-      setLocation(currentLocation);
-      console.log("Location : ", JSON.stringify(currentLocation));
+        const currentLocation = await Location.getCurrentPositionAsync();
+        setLocation(currentLocation);
+      } catch (error) {
+        console.error("Error fetching location: ", error);
+        setErrorMsg("Error fetching location");
+      }
     }
 
     fetchLocation();
   }, []);
 
   useEffect(() => {
-    async function startWatchingPosition() {
-      const sub = await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.BestForNavigation,
-          distanceInterval: 1,
-          timeInterval: 1000,
-        },
-        (newLocation) => {
-          setLocation(newLocation);
-        }
-      );
+    let subscription: Location.LocationSubscription | null = null;
 
-      return () => sub.remove();
+    async function startWatchingPosition() {
+      try {
+        subscription = await Location.watchPositionAsync(
+          {
+            accuracy: Location.Accuracy.BestForNavigation,
+            distanceInterval: 1,
+            timeInterval: 1000,
+          },
+          (newLocation) => {
+            setLocation(newLocation);
+          }
+        );
+      } catch (error) {
+        console.error("Error watching position: ", error);
+        setErrorMsg("Error watching position");
+      }
     }
 
-    const unsubscribe = startWatchingPosition();
+    startWatchingPosition();
 
     return () => {
-      unsubscribe
-        .then((unsubscribeFn) => unsubscribeFn())
-        .catch((err) => console.error(err));
+      if (subscription) {
+        subscription.remove();
+      }
     };
   }, [errorMsg]);
 
@@ -110,8 +108,7 @@ export default function LocationContextProvider({
         dropAddress,
         setDropAddress,
         distance,
-        setDistance
-        
+        setDistance,
       }}
     >
       {children}

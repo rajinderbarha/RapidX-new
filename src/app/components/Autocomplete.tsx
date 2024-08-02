@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState, useMemo } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import SelectLocationButton from "./SelectLocationButton";
@@ -14,21 +14,34 @@ export default function AutoComplete() {
   const route = useRoute();
   const { field }: any = route.params;
 
+  const query = useMemo(
+    () => ({
+      key: "AIzaSyCV2NRNl0uVeY37ID1gIoYgJexr9SBDn2Q",
+      language: "en",
+      components: "country:in",
+    }),
+    []
+  );
+
   useEffect(() => {
     if (!placeId) return;
 
     const fetchCoordinates = async () => {
-      const coords = await getCoords(placeId);
-      const locationSetter =
-        field === "pickup" ? setPickedLocation : setDropLocation;
-      locationSetter({
-        latitude: coords.lat,
-        longitude: coords.lng,
-      });
+      try {
+        const coords = await getCoords(placeId);
+        const locationSetter =
+          field === "pickup" ? setPickedLocation : setDropLocation;
+        locationSetter({
+          latitude: coords.lat,
+          longitude: coords.lng,
+        });
+      } catch (error) {
+        console.error("Error fetching coordinates: ", error);
+      }
     };
 
     fetchCoordinates();
-  }, [placeId]);
+  }, [placeId, field, setDropLocation, setPickedLocation]);
 
   function selectLocationHandler() {
     navigation.goBack();
@@ -42,26 +55,18 @@ export default function AutoComplete() {
           ref={ref}
           styles={autocompleteStyles}
           placeholder="Enter a location"
-          onPress={(data, details) => {
+          onPress={(data, details = null) => {
             const placeID = details?.place_id;
             placeID && setPlaceId(placeID);
           }}
-          query={{
-            key: "AIzaSyCV2NRNl0uVeY37ID1gIoYgJexr9SBDn2Q",
-            language: "en",
-            components: "country:in",
-          }}
+          query={query}
         />
       </View>
       <View>
         <SelectLocationButton
-          style={{
-            marginBottom: 18,
-            height: 50,
-            width: "95%",
-            alignSelf: "center",
-          }}
-          TEXT="Select Location"
+        iconName={""}
+          style={styles.selectButton}
+          text="Select Location"
           onPress={selectLocationHandler}
         />
       </View>
@@ -79,6 +84,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 10,
     marginLeft: 6,
+  },
+  selectButton: {
+    marginBottom: 18,
+    height: 50,
+    width: "95%",
+    alignSelf: "center",
   },
 });
 

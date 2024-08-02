@@ -1,3 +1,4 @@
+import React from "react";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import {
   Pressable,
@@ -5,16 +6,33 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ViewStyle,
+  TextStyle,
 } from "react-native";
 import { colors } from "../../../constants/colors";
 
+interface SelectLocationButtonProps {
+  style?: ViewStyle;
+  iconName: any;
+  text: string;
+  onPress: () => void;
+}
 
-export default function SelectLocationButton({ style, name, TEXT, onPress }: any) {
+export default function SelectLocationButton({
+  style,
+  iconName,
+  text,
+  onPress,
+}: SelectLocationButtonProps) {
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity
+      onPress={onPress}
+      accessible={true}
+      accessibilityLabel={text}
+    >
       <View style={[styles.btn, style]}>
-        <MaterialIcons name={name} size={26} color="black" />
-        <Text style={{ fontSize: 18, fontWeight: 600, color : 'black' }}>{TEXT}</Text>
+        <MaterialIcons name={iconName} size={26} color="black" />
+        <Text style={styles.text}>{text}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -30,8 +48,12 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     marginHorizontal: "18%",
     padding: 14,
-     
     borderRadius: 50,
     flexDirection: "row",
+  },
+  text: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "black",
   },
 });

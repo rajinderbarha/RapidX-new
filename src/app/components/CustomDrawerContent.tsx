@@ -1,43 +1,34 @@
 import React, { useContext } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
+import { View, Text, StyleSheet, Alert } from 'react-native';
+import { DrawerContentScrollView, DrawerItemList, DrawerItem, DrawerContentComponentProps } from '@react-navigation/drawer';
 import { AuthContext } from '../../store/AuthContext';
-import { Alert } from 'react-native';
 
-const CustomDrawerContent = (props : any) => {
+const CustomDrawerContent = (props: DrawerContentComponentProps) => {
+  const { signOut } = useContext(AuthContext);
 
-  const {signOut} = useContext(AuthContext)
-  
   const handleSignOut = async () => {
-      try {
-        await signOut();
-        Alert.alert("Signed out successfully");
-      } catch (error) {
-        console.error("Error signing out", error);
-      }
-    };
-
+    try {
+      await signOut();
+      Alert.alert("Signed out successfully");
+    } catch (error) {
+      console.error("Error signing out", error);
+    }
+  };
 
   return (
     <DrawerContentScrollView {...props} contentContainerStyle={styles.container}>
-      {/* User Section */}
       <View style={styles.userSection}>
         <Text style={styles.userName}>User Name</Text>
-        {/* Add more user details here */}
       </View>
 
-      {/* Screens Section */}
       <View style={styles.screensSection}>
         <DrawerItemList {...props} />
       </View>
 
-      {/* Logout Button */}
       <View style={styles.logoutSection}>
         <DrawerItem
           label="Logout"
-          onPress={() => {
-            handleSignOut();
-          }}
+          onPress={handleSignOut}
         />
       </View>
     </DrawerContentScrollView>

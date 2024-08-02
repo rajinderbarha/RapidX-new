@@ -1,21 +1,24 @@
-import { Marker } from "react-native-maps";
+import React from 'react';
+import { Marker } from 'react-native-maps';
 
 interface MapProps {
-    location: {
-      latitude: number;
-      longitude: number;
-    } ,
-    color : string
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+  color: string; 
 }
 
-export default function AddMarker({location , color} : MapProps){
+const AddMarker: React.FC<MapProps> = ({ location, color }) => {
   return (
     <Marker
-            pinColor={color}
-            coordinate={{
-              latitude: location.latitude,
-              longitude: location.longitude,
-            }}
-          />
+      pinColor={color}
+      coordinate={{
+        latitude: location.latitude,
+        longitude: location.longitude,
+      }}
+    />
   );
 };
+
+export default AddMarker;

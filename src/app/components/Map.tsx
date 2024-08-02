@@ -3,12 +3,10 @@ import { Alert, Dimensions, StyleSheet, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { LocationContext } from "../../store/LocationContext";
 import getAddress from "../../../util/location";
-// import { MapViewRoute } from "react-native-maps-routes";
-import MapViewDirections from "react-native-maps-directions";
 import AddMarker from "./Marker";
 import AddMapViewDirections from "./MapViewDirections";
 
-const GOOGLE_API_kEY = "AIzaSyCV2NRNl0uVeY37ID1gIoYgJexr9SBDn2Q";
+const GOOGLE_API_KEY = "AIzaSyCV2NRNl0uVeY37ID1gIoYgJexr9SBDn2Q";
 const { width, height } = Dimensions.get("window");
 
 const ASPECT_RATIO = width / height;
@@ -20,7 +18,8 @@ interface MapProps {
     latitude: number;
     longitude: number;
   } | null;
-  reff: any;
+  reff: React.RefObject<MapView>;
+  pickOnMap: any;
 }
 
 const defaultRegion = {
@@ -30,7 +29,7 @@ const defaultRegion = {
   longitudeDelta: LONGITUDE_DELTA,
 };
 
-export default function Map({ reff, pickOnMap }: any) {
+export default function Map({ reff, pickOnMap }: MapProps) {
   const [initialRegion, setInitialRegion] = useState(defaultRegion);
   const {
     pickedLocation,
@@ -55,15 +54,17 @@ export default function Map({ reff, pickOnMap }: any) {
   useEffect(() => {
     async function fetchAddress() {
       if (dropLocation) {
-        const address = await getAddress(
-          dropLocation.latitude,
-          dropLocation.longitude
-        );
-        setDropAddress(address);
+        try {
+          const address = await getAddress(dropLocation.latitude, dropLocation.longitude);
+          setDropAddress(address);
+        } catch (error) {
+          console.error("Error fetching address: ", error);
+          Alert.alert("Error", "Unable to fetch address.");
+        }
       }
     }
     fetchAddress();
-  }, [dropLocation]);
+  }, [dropLocation, setDropAddress]);
 
   function locationPicker(event: any) {
     setPickedLocation({
@@ -77,7 +78,6 @@ export default function Map({ reff, pickOnMap }: any) {
       latitude: event.nativeEvent.coordinate.latitude,
       longitude: event.nativeEvent.coordinate.longitude,
     });
-    console.log("Dropp");
   }
 
   return (

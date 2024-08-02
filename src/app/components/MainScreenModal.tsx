@@ -1,9 +1,8 @@
-import { Ionicons } from "@expo/vector-icons";
-import { BottomSheetView } from "@gorhom/bottom-sheet";
-import { useNavigation } from "@react-navigation/native";
-import { StyleSheet, Text, Pressable, View } from "react-native";
-import CustomBottomModal from "./CustomBottomModal";
-import { useMemo } from "react";
+import React, { useMemo } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { StyleSheet, Text, Pressable, View } from 'react-native';
+import CustomBottomModal from './CustomBottomModal';
 
 const TEXT = "Where are you going?";
 
@@ -12,21 +11,17 @@ interface BottomModalProps {
   isFocused: boolean;
 }
 
-export default function MainScreenModal({
-  onChange,
-  isFocused,
-}: BottomModalProps) {
+const MainScreenModal: React.FC<BottomModalProps> = ({ onChange, isFocused }) => {
   const navigation = useNavigation<any>();
 
+  const snapPoints = useMemo(() => ['15%', '60%', '99%'], []);
 
-  const snapPoints = useMemo(() => ["15%", "60%", "99%"], []);
-
-  function handlePress() {
-    navigation.navigate("Drop");
-  }
+  const handlePress = () => {
+    navigation.navigate('Drop');
+  };
 
   return (
-    <CustomBottomModal onChange={onChange} isFocused={isFocused} snapPoints={snapPoints} >
+    <CustomBottomModal onChange={onChange} isFocused={isFocused} snapPoints={snapPoints}>
       <View style={styles.root}>
         <Pressable
           style={({ pressed }) => [styles.input, pressed && styles.pressed]}
@@ -42,42 +37,43 @@ export default function MainScreenModal({
       </View>
     </CustomBottomModal>
   );
-}
+};
 
 const styles = StyleSheet.create({
   root: {
-    flexDirection: "row",
+    flexDirection: 'row',
     paddingHorizontal: 15,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     zIndex: 1,
   },
   input: {
     height: 43,
-    backgroundColor: "#ffffff",
-    width: "87%",
+    backgroundColor: '#ffffff',
+    width: '87%',
     borderRadius: 25,
-    justifyContent: "space-between",
-    alignItems: "center",
+    justifyContent: 'space-between',
+    alignItems: 'center',
     elevation: 9,
-    flexDirection: "row",
+    flexDirection: 'row',
     marginLeft: 10,
     paddingHorizontal: 10,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   pressed: {
-    backgroundColor: "#c9c3c3",
+    backgroundColor: '#c9c3c3',
   },
   locationContainer: {
-    flexDirection: "row",
-    gap: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
     flex: 1,
-    alignItems: "center",
   },
   text: {
-    color: "grey",
-    fontWeight: "600",
+    color: 'grey',
+    fontWeight: '600',
     fontSize: 16,
-    maxWidth: "85%",
+    maxWidth: '85%',
   },
 });
+
+export default MainScreenModal;

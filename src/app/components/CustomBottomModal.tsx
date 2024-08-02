@@ -8,7 +8,7 @@ interface BottomModalProps {
   onChange: (index: number) => void;
   isFocused: boolean;
   children: React.ReactNode;
-  snapPoints : (string | number)[] | SharedValue<(string | number)[]>
+  snapPoints: (string | number)[] | SharedValue<(string | number)[]>;
 }
 
 export default function CustomBottomModal({
@@ -18,20 +18,18 @@ export default function CustomBottomModal({
   snapPoints
 }: PropsWithChildren<BottomModalProps>) {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  
-
   const navigation = useNavigation();
 
-  const openModal =() => {
+  const openModal = useCallback(() => {
     bottomSheetModalRef.current?.present();
     bottomSheetModalRef.current?.snapToIndex(0);
-  };
+  }, []);
 
   useEffect(() => {
     if (isFocused) {
       openModal();
     }
-  }, [isFocused, openModal, navigation]);
+  }, [isFocused, navigation]);
 
   return (
     <BottomSheetModal

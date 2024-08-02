@@ -1,45 +1,48 @@
 import { createContext, PropsWithChildren, useEffect, useState } from "react";
-import auth from "@react-native-firebase/auth";
+import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { Alert } from "react-native";
 
-export const AuthContext = createContext({
-    confirm : '',
-    user : '',
-    signInWithPhoneNumber : (phoneNumber : string)=>{},
-    confirmOtp : (otp : string)=>{},
-    signOut : ()=>{}
+interface AuthContextProps {
+  user: FirebaseAuthTypes.User | null;
+  confirm: FirebaseAuthTypes.ConfirmationResult | null;
+  signInWithPhoneNumber: (phoneNumber: string) => Promise<FirebaseAuthTypes.ConfirmationResult | void>;
+  confirmOtp: (otp: string) => Promise<void>;
+  signOut: () => Promise<void>;
+}
+
+export const AuthContext = createContext<AuthContextProps>({
+  user: null,
+  confirm: null,
+  signInWithPhoneNumber: async () => {},
+  confirmOtp: async () => {},
+  signOut: async () => {},
 });
 
 export default function AuthContextProvider({ children }: PropsWithChildren) {
-  const [confirm, setConfirm] = useState<any>(null);
-  const [user, setUser] = useState<any>(null);
+  const [confirm, setConfirm] = useState<FirebaseAuthTypes.ConfirmationResult | null>(null);
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
 
-  // Handle login
-  function onAuthStateChanged(user: any) {
-    setUser(user);
-    if (user) {
-      console.log("logged In");
-    }
-  }
   useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber;
+    const subscriber = auth().onAuthStateChanged((user) => {
+      setUser(user);
+      if (user) {
+        console.log("Logged In");
+      }
+    });
+    return subscriber; // unsubscribe on unmount
   }, []);
 
-
-
-  async function signInWithPhoneNumber(phoneNumber : string) {
-      try {
-        const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
-        setConfirm(confirmation);
-        console.log("confirm = ", confirmation);
-       
-        return confirmation;
+  async function signInWithPhoneNumber(phoneNumber: string) {
+    try {
+      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
+      setConfirm(confirmation);
+      console.log("confirm =", confirmation);
+      return confirmation;
     } catch (error) {
       console.error("Error signing in", error);
       throw error;
     }
-  };
+  }
 
   async function signOut() {
     try {
@@ -52,31 +55,25 @@ export default function AuthContextProvider({ children }: PropsWithChildren) {
     }
   }
 
-
-  async function confirmOtp(otp : string) {
+  async function confirmOtp(otp: string) {
     try {
-      const userCredential  = await confirm.confirm(otp);
-      // const idToken = await userCredential.user.getIdToken()
-      // const session = await userCredential
-      // const user =  await userCredential.user
-      // console.log('cofxx : ', idToken)
-      // console.log('session : ', session)
-      // console.log('user : ', user)
-
+      if (confirm) {
+        await confirm.confirm(otp);
+      } else {
+        throw new Error("No confirmation result found");
+      }
     } catch (error) {
-      console.log("Invalid code.");
+      console.log("Invalid code", error);
     }
   }
-
 
   const value = {
     user,
     confirm,
-    signOut,
+    signInWithPhoneNumber,
     confirmOtp,
-    signInWithPhoneNumber
-  }
-
+    signOut,
+  };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
