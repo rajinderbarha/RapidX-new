@@ -10,11 +10,11 @@ interface BottomModalProps {
 }
 
 interface FareDetails {
-    baseFare: number; // Base fare for the ride
-    costPerKm: number; // Cost per kilometer
-    distance: any; // Distance of the ride in kilometers
-    additionalFees?: number; // Any additional fees (optional)
-    discount?: number; // Any discount (optional)
+    baseFare: number;
+    costPerKm: number;
+    distance: any; 
+    additionalFees?: number; 
+    discount?: number;
 }
 
 export default function ConfirmLocationModal({ isFocused, onChange }: BottomModalProps) {

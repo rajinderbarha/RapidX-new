@@ -6,14 +6,26 @@ import { LocationContext } from "../../store/LocationContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import getAddress, { getCoords } from "../../../util/location";
 import MyLocationButton from "../../ui/MyLocationButton";
+import MapViewComponent from "./MapViewComponent";
+import MapView from "react-native-maps";
+import AddMarker from "./Marker";
+import { TouchableOpacity } from "react-native";
 
 export default function AutoComplete() {
   const ref = useRef<any>(null);
   const [placeId, setPlaceId] = useState("");
-  const { setDropLocation, setPickedLocation, location, setDropAddress, setPickupAddress } =
+  const { pickedLocation ,setDropLocation, setPickedLocation, location, dropLocation, setPickupAddress } =
     useContext(LocationContext);
   const navigation = useNavigation();
   const route = useRoute();
+  const mapRef = useRef<MapView>(null);
+  const [pickOnMap, setPickOnMap] = useState(false);
+
+
+  useEffect(() => {
+    console.log("pick On Map", pickOnMap)
+  }, [pickOnMap]);
+
   const { field }: any = route.params;
 
   const query = useMemo(
@@ -46,6 +58,7 @@ export default function AutoComplete() {
   }, [placeId, field, setDropLocation, setPickedLocation]);
 
   function selectLocationHandler() {
+    
     navigation.goBack();
   }
 
@@ -63,37 +76,69 @@ export default function AutoComplete() {
 
   const label = field === "pickup" ? "From" : "Where to";
 
-  return (
-    <>
-      <View style={styles.container}>
-        <Text style={styles.title}>{label}</Text>
-        <GooglePlacesAutocomplete
-          ref={ref}
-          styles={autocompleteStyles}
-          placeholder="Enter a location"
-          onPress={(data, details = null) => {
-            const placeID = details?.place_id;
-            placeID && setPlaceId(placeID);
-            console.log(details);
-          }}
-          query={query}
-        />
+    function onMapPressHandler(){
+      setPickOnMap(false)
+      navigation.goBack()
+    }
 
-        {field === "pickup" && (
-          <MyLocationButton onPress={fetchCurrentLocation} />
+    return (
+      <>
+        {pickOnMap ? (
+          <View style={styles.container}>
+            <MapViewComponent reff={mapRef} pickOnMap={true}>
+              {field === "pickup" && pickedLocation && (
+                <AddMarker location={pickedLocation} color="blue" />
+              )}
+              {field === "drop" && dropLocation && (
+                <AddMarker location={dropLocation} color="red" />
+              )}
+            </MapViewComponent>
+            <SelectLocationButton
+              text="Confirm Location"
+              iconName={""}
+              onPress={onMapPressHandler}
+            />
+          </View>
+        ) : (
+          <>
+            <View style={styles.container}>
+              <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                <Text style={styles.title}>{label}</Text>
+                <TouchableOpacity onPress={() => setPickOnMap(true)}>
+                  <Text style={styles.mapButton}>Pick on map</Text>
+                </TouchableOpacity>
+              </View>
+              <GooglePlacesAutocomplete
+                ref={ref}
+                styles={autocompleteStyles}
+                placeholder="Enter a location"
+                onPress={(data, details = null) => {
+                  const placeID = details?.place_id;
+                  placeID && setPlaceId(placeID);
+                  console.log(details);
+                }}
+                query={query}
+              />
+              {field === "pickup" && (
+                <MyLocationButton
+                  onPress={fetchCurrentLocation}
+                  style={{ top: 85, height: 30, width: 30 }}
+                />
+              )}
+            </View>
+            <View>
+              <SelectLocationButton
+                iconName={""}
+                style={styles.selectButton}
+                text="Select Location"
+                onPress={selectLocationHandler}
+              />
+            </View>
+          </>
         )}
-      </View>
-      <View>
-        <SelectLocationButton
-          iconName={""}
-          style={styles.selectButton}
-          text="Select Location"
-          onPress={selectLocationHandler}
-        />
-      </View>
-    </>
-  );
-}
+      </>
+    );
+  }
 
 const styles = StyleSheet.create({
   container: {
@@ -111,6 +156,12 @@ const styles = StyleSheet.create({
     height: 50,
     width: "95%",
     alignSelf: "center",
+  },
+   mapButton : {
+    fontSize: 16,
+    marginBottom: 10,
+    marginLeft: 6,
+    color : 'blue'
   },
 });
 

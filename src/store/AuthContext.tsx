@@ -62,31 +62,13 @@ export default function AuthContextProvider({ children }: PropsWithChildren) {
 
   async function confirmOtp(otp: any) {
 
-    const [token, setToken] = useState();
+   
 
 
     try {
       if (confirm) {
         await confirm.confirm(otp);
-        // const response = await fetch('https://rw6v05jh-8000.inc1.devtunnels.ms/api/users/verify-otp', {
-        //   method: 'POST',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     'Authorization': `Bearer ${"mySuperSecretKey123"}`,
-        //   },
-        //   body: JSON.stringify({
-        //     phnumber,
-        //     otp,
-        //   }),
-        // });
-  
-        // const data = await response.json();
-        // if (response.ok) {
-        //   setToken(data.token);
-        // } else {
-        //   console.error(data);
-        //   alert('Invalid code.');
-        // }
+       
       
        
       
