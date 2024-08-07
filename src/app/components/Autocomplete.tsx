@@ -8,7 +8,7 @@ import getAddress, { getCoords } from "../../../util/location";
 import MyLocationButton from "../../ui/MyLocationButton";
 import MapViewComponent from "./MapViewComponent";
 import MapView from "react-native-maps";
-import AddMarker from "./Marker";
+import AddMarker from "./AddMarker";
 import { TouchableOpacity } from "react-native";
 
 export default function AutoComplete() {
@@ -75,6 +75,7 @@ export default function AutoComplete() {
   }
 
   const label = field === "pickup" ? "From" : "Where to";
+  const markerType = field === "pickup" ? "pickup" : "drop";
 
     function onMapPressHandler(){
       setPickOnMap(false)
@@ -85,12 +86,12 @@ export default function AutoComplete() {
       <>
         {pickOnMap ? (
           <View style={styles.container}>
-            <MapViewComponent reff={mapRef} pickOnMap={true}>
+            <MapViewComponent reff={mapRef} markerType={markerType}>
               {field === "pickup" && pickedLocation && (
-                <AddMarker location={pickedLocation} color="blue" />
+                <AddMarker location={pickedLocation} color="blue" image={null}/>
               )}
               {field === "drop" && dropLocation && (
-                <AddMarker location={dropLocation} color="red" />
+                <AddMarker location={dropLocation} color="red" image={null}/>
               )}
             </MapViewComponent>
             <SelectLocationButton

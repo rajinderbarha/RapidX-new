@@ -5,10 +5,11 @@ import Map from "../components/Map";
 import MyLocationButton from "../../ui/MyLocationButton";
 import MapView from "react-native-maps";
 import { LocationContext } from "../../store/LocationContext";
-import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import CustomBottomModal from "../components/CustomBottomModal";
 import MainScreenModal from "../components/MainScreenModal";
+import OnBookedRideModal from "../components/OnBookedRideModal";
 
 
 
@@ -26,7 +27,15 @@ export default function MainScreen() {
     setButtonBottomPosition(modalHeight * height + 20); // Adjust button position based on modal height
   }, []);
 
+  const route = useRoute<any>()
 
+  const rideIsBooked = route.params?.rideIsBooked
+
+
+  useEffect(() => {
+    console.log('boook ', rideIsBooked)
+    
+  }, [route, rideIsBooked]);
 
   function myLocationButtonHandler() {
     if (location && mapRef.current) {
@@ -36,11 +45,12 @@ export default function MainScreen() {
         latitudeDelta: 0.0222,
         longitudeDelta: 0.0221,
       });
+      console.log(location)
     }
   }
 
  
-
+if(!rideIsBooked){
   return (
     <BottomSheetModalProvider>
     <View style={styles.container}>
@@ -48,13 +58,31 @@ export default function MainScreen() {
         <MainHeader />
       </View>
       <View style={styles.mapContainer}>
-        <Map pickOnMap={null} location={location?.coords || null} reff={mapRef} />
+        <Map markerType={"pickUp"} location={location?.coords || null} reff={mapRef} />
       </View>
       <MyLocationButton onPress={myLocationButtonHandler} style={{bottom : buttonBottomPosition}} />
     </View>
     <MainScreenModal onChange={handleModalChange} isFocused={isFocused}/>
     </BottomSheetModalProvider>
   );
+}else{
+  return (
+    <BottomSheetModalProvider>
+    <View style={styles.container}>
+      <View style={styles.mapContainer}>
+        <Map markerType={"pickUp"} location={location?.coords || null} reff={mapRef} />
+      </View>
+      <MyLocationButton onPress={myLocationButtonHandler} style={{bottom : buttonBottomPosition}} />
+    </View>
+    <OnBookedRideModal onChange={handleModalChange} isFocused={isFocused}/>
+    </BottomSheetModalProvider>
+  );
+}
+
+
+
+
+
 }
 
 const styles = StyleSheet.create({

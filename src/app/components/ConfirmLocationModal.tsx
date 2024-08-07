@@ -1,87 +1,100 @@
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, ActivityIndicator } from "react-native";
 import CustomBottomModal from "./CustomBottomModal";
 import OrangeButton from "../../ui/OrangeButton";
-import { useContext, useMemo, useCallback } from "react";
+import { useContext, useMemo, useCallback, useState, useEffect } from "react";
 import { LocationContext } from "../../store/LocationContext";
+import { ProgressBarAndroidComponent } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 interface BottomModalProps {
-    onChange: (index: number) => void;
-    isFocused: boolean;
+  onChange: (index: number) => void;
+  isFocused: boolean;
 }
 
-interface FareDetails {
-    baseFare: number;
-    costPerKm: number;
-    distance: any; 
-    additionalFees?: number; 
-    discount?: number;
-}
+export default function ConfirmLocationModal({
+  isFocused,
+  onChange,
+}: BottomModalProps) {
+  const { distance, fare } = useContext(LocationContext);
 
-export default function ConfirmLocationModal({ isFocused, onChange }: BottomModalProps) {
-    const { distance } = useContext(LocationContext);
-    const baseFare = 25;
-    const costPerKm = 9;
+  const [rideIsBooked, setRideIsBooked] = useState(false);
 
-    const calculateFare = useCallback(({
-        baseFare,
-        costPerKm,
-        distance,
-        additionalFees = 0,
-        discount = 0,
-    }: FareDetails): number => {
-        const totalFare = baseFare + costPerKm * distance + additionalFees - discount;
-        return Math.max(totalFare, 0);
-    }, []);
+  const snapPoints = useMemo(() => ["25%"], []);
 
-    const price = useMemo(() => calculateFare({ baseFare, costPerKm, distance }).toFixed(0), [calculateFare, baseFare, costPerKm, distance]);
+  const navigation = useNavigation<any>();
 
-    const snapPoints = useMemo(() => ["20%", "25%"], []);
+  function bookRideHandler() {
+    setRideIsBooked(true);
+  }
 
-    return (
-        <CustomBottomModal isFocused={isFocused} onChange={onChange} snapPoints={snapPoints}>
-            <View style={styles.container}>
-                <View style={styles.detailsContainer}>
-                    <View style={styles.detailItem}>
-                        <Text style={styles.detailLabel}>Distance</Text>
-                        <Text style={styles.detailValue}>{distance} km</Text>
-                    </View>
-                    <View style={styles.detailItem}>
-                        <Text style={styles.detailLabel}>Price</Text>
-                        <Text style={styles.detailValue}>{price} ₹</Text>
-                    </View>
-                </View>
-                <View style={styles.buttonContainer}>
-                    <OrangeButton text="Book Ride" onPress={() => { }} />
-                </View>
+  useEffect(() => {
+    if (rideIsBooked) {
+      const timer = setTimeout(() => {
+        navigation.navigate("Main", { rideIsBooked });
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [rideIsBooked, navigation]);
+
+  return (
+    <CustomBottomModal
+      isFocused={isFocused}
+      onChange={onChange}
+      snapPoints={snapPoints}
+    >
+      {!rideIsBooked && (
+        <View style={styles.container}>
+          <View style={styles.detailsContainer}>
+            <View style={styles.detailItem}>
+              <Text style={styles.detailLabel}>Distance</Text>
+              <Text style={styles.detailValue}>{distance} km</Text>
             </View>
-        </CustomBottomModal>
-    );
+            <View style={styles.detailItem}>
+              <Text style={styles.detailLabel}>Price</Text>
+              <Text style={styles.detailValue}>{fare} ₹</Text>
+            </View>
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <OrangeButton text="Book Ride" onPress={bookRideHandler} />
+          </View>
+        </View>
+      )}
+
+      {rideIsBooked && (
+        <View style={styles.container}>
+          <ActivityIndicator />
+        </View>
+      )}
+    </CustomBottomModal>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        padding: 20,
-    },
-    detailsContainer: {
-        marginBottom: 20,
-    },
-    detailItem: {
-        marginBottom: 15,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-    },
-    detailLabel: {
-        fontSize: 16,
-        color: 'grey',
-    },
-    detailValue: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: 'black',
-    },
-    buttonContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
+  container: {
+    padding: 20,
+  },
+  detailsContainer: {
+    marginBottom: 20,
+  },
+  detailItem: {
+    marginBottom: 15,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  detailLabel: {
+    fontSize: 16,
+    color: "grey",
+  },
+  detailValue: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "black",
+  },
+  buttonContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });

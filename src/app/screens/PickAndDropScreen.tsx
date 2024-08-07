@@ -20,7 +20,7 @@ export default function PickAndDropScreen() {
       <View style={styles.root}>
         <PickAndDropLocation />
         <View style={styles.mapContainer}>
-          <Map location={location?.coords || null} reff={mapRef} pickOnMap={pickOnMap} />
+          <Map location={location?.coords || null} reff={mapRef} markerType={"drop"} />
         </View>
         {pickedLocation && dropLocation && (
           <ConfirmLocationModal isFocused={isFocused} onChange={() => {}} />

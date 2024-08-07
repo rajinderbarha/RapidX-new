@@ -1,36 +1,39 @@
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import { Dimensions } from "react-native";
 import MapViewDirections from "react-native-maps-directions";
 import { LocationContext } from "../../store/LocationContext";
-
-
+import MapData from "../../../util/mapApis";
 
 const GOOGLE_API_kEY = "AIzaSyCV2NRNl0uVeY37ID1gIoYgJexr9SBDn2Q";
 const { width, height } = Dimensions.get("window");
 
-
-
 interface DirectionProps {
-    origin : {
-        latitude: number;
-        longitude: number;
-    },
-    destination : {
-        latitude: number;
-        longitude: number;
-    },
-    reff : any
+  origin: {
+    latitude: number;
+    longitude: number;
+  };
+  destination: {
+    latitude: number;
+    longitude: number;
+  };
+  reff: any;
 }
 
+export default function AddMapViewDirections({
+  origin,
+  destination,
+  reff,
+}: DirectionProps) {
+  const diractionsRef = useRef();
+  const { setDistance } = useContext(LocationContext);
+  const { pickupAddress, dropAddress, setFare } = useContext(LocationContext);
 
-export default function AddMapViewDirections({origin, destination, reff} : DirectionProps){
-
-  const {setDistance} = useContext(LocationContext)
-
+  const pickupAddressRef = useRef(pickupAddress);
+  const dropAddressRef = useRef(dropAddress);
 
   return (
     <MapViewDirections
-    origin={{
+      origin={{
         latitude: origin.latitude,
         longitude: origin.longitude,
       }}
@@ -49,11 +52,25 @@ export default function AddMapViewDirections({origin, destination, reff} : Direc
         );
       }}
       onReady={(result) => {
-        const distance = result.distance.toFixed(2)
-        setDistance(distance)
+        console.log(result);
+        const distance = result.distance.toFixed(2);
+        setDistance(distance);
         console.log(`Distance: ${result.distance} km`);
         console.log(`Duration: ${result.duration} min.`);
-
+        async function sendData() {
+          const fare = await MapData(
+            origin,
+            destination,
+            result.distance,
+            result.duration,
+            result.legs[0].start_address,
+            result.legs[0].end_address
+           
+          );
+          setFare(fare)
+          
+        }
+        sendData();
         reff.current?.fitToCoordinates(result.coordinates, {
           edgePadding: {
             right: width / 20,
@@ -68,4 +85,4 @@ export default function AddMapViewDirections({origin, destination, reff} : Direc
       }}
     />
   );
-};
+}

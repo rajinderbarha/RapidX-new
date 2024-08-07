@@ -13,7 +13,10 @@ import {
 } from "react-native";
 import OrangeButton from "../../ui/OrangeButton";
 import { AuthContext } from "../../store/AuthContext";
-import {  } from "../../../util/location";
+import {} from "../../../util/location";
+import AuthenticatePhoneNumber from "../../../util/localAPIs";
+import { LocalAuthContext } from "../../store/LocalAuthContext";
+import { ProfileContext } from "../../store/ProfileContext";
 
 export default function AuthScreen() {
   const [countryCode, setCountryCode] = useState<string>("+91");
@@ -21,13 +24,13 @@ export default function AuthScreen() {
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [otp, setOtp] = useState("");
 
-  const {confirm,confirmOtp,signInWithPhoneNumber,signOut,user} =useContext(AuthContext)
+  // const {confirm,confirmOtp,signInWithPhoneNumber,signOut,user} =useContext(AuthContext)
+  const { setToken, token } = useContext(LocalAuthContext);
+  const { setPhNumber, setName } = useContext(ProfileContext);
 
   useEffect(() => {
     setPhoneNumber(`${countryCode}${phoneNumberInput}`);
   }, [countryCode, phoneNumberInput]);
-
-  
 
   function validatePhoneNumber(countryCode: string, phoneNumber: string) {
     const countryCodeRegex = /^\+\d{2}$/;
@@ -52,33 +55,28 @@ export default function AuthScreen() {
     return true;
   }
 
-
-  async function handelSignIn(){
-    if(validatePhoneNumber(countryCode, phoneNumberInput)){
-      try{
-        await signInWithPhoneNumber(phoneNumber);
-        Alert.alert("OTP sent");
-      }
-      catch (error) {
+  async function handelSignIn() {
+    if (validatePhoneNumber(countryCode, phoneNumberInput)) {
+      try {
+        const userData = await AuthenticatePhoneNumber(phoneNumber);
+        const receivedToken = userData.token;
+        setToken(receivedToken);
+        setPhNumber(phoneNumber);
+        setName(userData.name)
+        Alert.alert("Logging You In");
+      } catch (error) {
         console.error("Error signing in", error);
       }
     }
+  }
 
-  };
-  
-  const handleConfirmOtp = async () => {
-    try {
-       confirmOtp(otp);
-    } catch (error) {
-      console.log("Invalid code. otp");
-    }
-  };
-
-  
-
-
- 
-
+  // const handleConfirmOtp = async () => {
+  //   try {
+  //      confirmOtp(otp);
+  //   } catch (error) {
+  //     console.log("Invalid code. otp");
+  //   }
+  // };
 
   return (
     <KeyboardAvoidingView
@@ -94,7 +92,8 @@ export default function AuthScreen() {
               source={require("../../../assets/data/scooter.png")}
             />
           </View>
-          {!confirm && !user && (
+          {/* !confirm && !user &&  */}
+          {
             <View style={styles.formContainer}>
               <Text style={styles.label}>Enter Your Mobile Number</Text>
               <View style={styles.inputContainer}>
@@ -116,9 +115,9 @@ export default function AuthScreen() {
                 />
               </View>
             </View>
-          )}
+          }
 
-          {confirm && !user && (
+          {/* {confirm && !user && (
             <View style={styles.formContainer}>
               <Text style={styles.label}>Enter Your OTP</Text>
               <View style={styles.inputContainer}>
@@ -131,15 +130,17 @@ export default function AuthScreen() {
                 />
               </View>
             </View>
-          )}
+          )} */}
         </View>
       </ScrollView>
-      {!confirm && !user &&(
+      <OrangeButton text={"Send"} onPress={handelSignIn} />
+
+      {/* {!confirm && !user &&(
         <OrangeButton text={"Send"} onPress={handelSignIn} />
       )}
       {confirm && !user &&(
         <OrangeButton text={"Confirm OTP"} onPress={handleConfirmOtp} />
-      )}
+      )} */}
       {/* {user && (
         <OrangeButton text={"Sign Out"} onPress={handleSignOut} />
       )} */}

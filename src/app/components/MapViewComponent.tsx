@@ -1,9 +1,13 @@
-import React, { PropsWithChildren, useContext, useEffect, useState } from "react";
+import React, {
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { Alert, Dimensions, StyleSheet, View } from "react-native";
 import MapView from "react-native-maps";
 import { LocationContext } from "../../store/LocationContext";
 import getAddress from "../../../util/location";
-
 
 const { width, height } = Dimensions.get("window");
 
@@ -12,9 +16,8 @@ const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
 interface MapProps {
-
   reff: React.RefObject<MapView>;
-  pickOnMap: any;
+  markerType: string;
   children: React.ReactNode;
 }
 
@@ -25,10 +28,13 @@ const defaultRegion = {
   longitudeDelta: LONGITUDE_DELTA,
 };
 
-export default function MapViewComponent({ reff, pickOnMap, children }:PropsWithChildren<MapProps>) {
+export default function MapViewComponent({
+  reff,
+  markerType,
+  children,
+}: PropsWithChildren<MapProps>) {
   const [initialRegion, setInitialRegion] = useState(defaultRegion);
   const {
-    pickedLocation,
     setPickedLocation,
     location,
     setDropLocation,
@@ -51,7 +57,10 @@ export default function MapViewComponent({ reff, pickOnMap, children }:PropsWith
     async function fetchAddress() {
       if (dropLocation) {
         try {
-          const address = await getAddress(dropLocation.latitude, dropLocation.longitude);
+          const address = await getAddress(
+            dropLocation.latitude,
+            dropLocation.longitude
+          );
           setDropAddress(address);
         } catch (error) {
           console.error("Error fetching address: ", error);
@@ -81,20 +90,19 @@ export default function MapViewComponent({ reff, pickOnMap, children }:PropsWith
       <MapView
         style={styles.map}
         initialRegion={initialRegion}
-        onPress={pickOnMap ? dropLocationPicker : locationPicker}
+        onPress={markerType === "drop" ? dropLocationPicker : locationPicker}
         showsUserLocation={true}
         followsUserLocation={true}
         showsMyLocationButton={false}
         ref={reff}
         showsBuildings={false}
         onMarkerPress={
-          pickOnMap
+          markerType === "drop" 
             ? () => setDropLocation(null)
             : () => setPickedLocation(null)
         }
         userLocationUpdateInterval={5000}
         moveOnMarkerPress={false}
-        
       >
         {children}
       </MapView>

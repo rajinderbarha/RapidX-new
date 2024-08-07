@@ -4,7 +4,7 @@ import { Image, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
@@ -23,6 +23,10 @@ import SelectLocationButton from "./src/app/components/SelectLocationButton";
 import AuthContextProvider, { AuthContext } from "./src/store/AuthContext";
 import LocationContextProvider from "./src/store/LocationContext";
 import CustomBackButton from "./src/ui/CustomBackButton";
+import LocalAuthProvider, { LocalAuthContext } from "./src/store/LocalAuthContext";
+import { fetchToken } from "./util/localAPIs";
+import ProfileScreen from "./src/app/screens/ProfileScreen";
+import ProfileContextProvider from "./src/store/ProfileContext";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -69,11 +73,13 @@ function AuthenticatedStack() {
       <Stack.Screen
         name="Drop"
         component={PickAndDropScreen}
-        options={{ presentation: "modal",
-          headerLeft: () => <CustomBackButton />
-         }}
+        options={{
+          presentation: "modal",
+          headerLeft: () => <CustomBackButton />,
+        }}
       />
       <Stack.Screen name="Locations" component={SelectLocationScreen} />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
     </Stack.Navigator>
   );
 }
@@ -101,11 +107,23 @@ function DrawerNavigator() {
 }
 
 function Navigation() {
-  const { user } = useContext(AuthContext);
+  // const { user } = useContext(AuthContext);
+  const { token, setToken } = useContext(LocalAuthContext);
+
+  useEffect(() => {
+    async function fetchingToken() {
+      const storedToken = await fetchToken();
+      if (storedToken) {
+        setToken(storedToken);
+      }
+    }
+    fetchingToken()
+  }, []);
+
   return (
     <NavigationContainer>
       <StatusBar style="auto" />
-      {!user ? <AuthStack /> : <DrawerNavigator />}
+      {!token ? <AuthStack /> : <DrawerNavigator />}
     </NavigationContainer>
   );
 }
@@ -113,11 +131,15 @@ function Navigation() {
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <LocalAuthProvider>
       <AuthContextProvider>
         <LocationContextProvider>
+          <ProfileContextProvider>
           <Navigation />
+          </ProfileContextProvider>
         </LocationContextProvider>
       </AuthContextProvider>
+      </LocalAuthProvider>
     </GestureHandlerRootView>
   );
 }

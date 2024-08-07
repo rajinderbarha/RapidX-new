@@ -7,7 +7,7 @@ const { width, height } = Dimensions.get('window');
 export default function OrangeButton({ onPress, text }) {
   return (
     <TouchableOpacity onPress={onPress} style={styles.container}>
-      <View style={styles.btn}>
+      <View style={[styles.btn, {backgroundColor : colors.primary }]}>
         <Text style={styles.text}>{text}</Text>
         <View style={styles.iconContainer}>
           <Ionicons name="arrow-forward" size={18} color="white" />
@@ -28,15 +28,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center', // Center the content within the button
     padding: 10,
-    backgroundColor: colors.primary,
+    
     borderRadius: 50,
     height: 55,
   },
   text: {
-    fontSize: width * 0.05, // Adjust font size based on screen width
+    fontSize: width * 0.048, // Adjust font size based on screen width
     fontWeight: '600',
     color: 'white',
-    marginRight: 10, // Space between text and icon
+    // marginRight: 10, // Space between text and icon
     textAlign: 'center', // Center the text horizontally
     flex: 1, // Allow text to take remaining space
   },

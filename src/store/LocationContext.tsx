@@ -14,6 +14,8 @@ interface LocationContextType {
   distance: string;
   setDistance: (distance: string) => void;
   reset: () => void,
+  fare : number | null;
+  setFare : (fare : number)=> void;
 }
 
 interface MarkerProps {
@@ -34,6 +36,8 @@ export const LocationContext = createContext<LocationContextType>({
   distance: "",
   setDistance: () => {},
   reset: () => {},
+  fare : 0 ,
+  setFare : ()=>{}
 });
 
 export default function LocationContextProvider({
@@ -45,6 +49,8 @@ export default function LocationContextProvider({
   const [pickupAddress, setPickupAddress] = useState("");
   const [dropAddress, setDropAddress] = useState("");
   const [distance, setDistance] = useState("");
+  const [fare, setFare] = useState(0);
+
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
 
@@ -123,7 +129,9 @@ export default function LocationContextProvider({
         setDropAddress,
         distance,
         setDistance,
-        reset
+        reset,
+        fare,
+        setFare
       }}
     >
       {children}
