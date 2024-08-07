@@ -1,22 +1,21 @@
-import React, { useContext } from "react";
-import { View, Text, StyleSheet, Alert, Pressable, TouchableOpacity } from "react-native";
-import {
-  DrawerContentScrollView,
-  DrawerItemList,
-  DrawerItem,
-  DrawerContentComponentProps,
-} from "@react-navigation/drawer";
-import { AuthContext } from "../../store/AuthContext";
-import { logout } from "../../../util/localAPIs";
-import { LocalAuthContext } from "../../store/LocalAuthContext";
-import { useNavigation } from "@react-navigation/native";
-import { ProfileContext } from "../../store/ProfileContext";
+import React, { useContext, useState } from 'react';
+import { View, StyleSheet, Alert } from 'react-native';
+import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
+import { Avatar, Icon, Text } from '@rneui/base';
+import { colors } from '../../../constants/colors';
+import LogoutModal from './LogoutModal';
+import { LocalAuthContext } from '../../store/LocalAuthContext';
+import { logout } from '../../../util/localAPIs';
 
-const CustomDrawerContent = (props: DrawerContentComponentProps) => {
-  // const { signOut } = useContext(AuthContext);
+export default function CustomDrawerContent(props : DrawerContentComponentProps) {
+
+  const [isAlertVisible, setAlertVisible] = useState(false);
+
   const { setToken } = useContext(LocalAuthContext);
-  const { name } = useContext(ProfileContext);
-const navigation = useNavigation<any>()
+
+  function toggleAlert() {
+    setAlertVisible(!isAlertVisible);
+  }
 
   const handleSignOut = async () => {
     try {
@@ -30,49 +29,95 @@ const navigation = useNavigation<any>()
     }
   };
 
-  return (
-    <DrawerContentScrollView
-      {...props}
-      contentContainerStyle={styles.container}
-    >
-      <View style={styles.userSection}>
-        <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
-        <Text style={styles.userName}>{name}</Text>
-        </TouchableOpacity>
-      </View>
 
-      <View style={styles.screensSection}>
-        <DrawerItemList {...props} />
+  return (<>
+    <DrawerContentScrollView {...props}>
+      <View style={styles.header}>
+        <View>
+        <Avatar
+          size="large"
+          rounded
+          source={{ uri: 'https://randomuser.me/api/portraits/men/41.jpg' }} // Replace with your image
+          containerStyle={styles.avatar}
+        />
+        </View>
+        <View>
+        <Text h4 style={styles.name}>Gorge Jacob</Text>
+        <View style={styles.rating}>
+          {Array(5).fill(0).map((_, i) => (
+            <Icon key={i} name="star" type="font-awesome" color="#FFD700" size={17} style={{marginRight : 5, marginTop : 5}}/>
+          ))}
+        </View>
+        </View>
       </View>
-
-      <View style={styles.logoutSection}>
-        <DrawerItem label="Logout" onPress={handleSignOut} />
-      </View>
+      <DrawerItem
+        label="Home"
+        icon={() => <Icon name="home" type="font-awesome" color={colors.primary00} />}
+        onPress={() => props.navigation.navigate('Home')}
+      />
+      <DrawerItem
+        label="Payment"
+        icon={() => <Icon name="credit-card" type="font-awesome"  color={colors.primary00}/>}
+        onPress={() => props.navigation.navigate('Payment')}
+      />
+      <DrawerItem
+        label="About Us"
+        icon={() => <Icon name="info-circle" type="font-awesome" color={colors.primary00} />}
+        onPress={() => props.navigation.navigate('About Us')}
+      />
+      <DrawerItem
+        label="Terms & Conditions"
+        icon={() => <Icon name="file-text" type="font-awesome" color={colors.primary00} />}
+        onPress={() => props.navigation.navigate('About Us')}
+      />
+      <DrawerItem
+        label="Privacy Policy"
+        icon={() => <Icon name="shield" type="font-awesome" color={colors.primary00} />}
+        onPress={() => props.navigation.navigate('Privacy Policy')}
+      />
+      <DrawerItem
+        label="Contact Us"
+        icon={() => <Icon name="phone" type="font-awesome" color={colors.primary00} />}
+        onPress={() => props.navigation.navigate('Contact Us')}
+      />
     </DrawerContentScrollView>
+    <DrawerItem
+    style={styles.logoutSection}
+        label="Logout"
+        icon={() => <Icon name="sign-out" type="font-awesome" color={colors.primary00} />}
+        onPress={toggleAlert}
+      />
+ <LogoutModal
+        isVisible={isAlertVisible}
+        onClose={toggleAlert}
+        onConfirm={handleSignOut}
+      />
+    </>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "space-between",
-  },
-  userSection: {
-    padding: 16,
+  header: {
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    borderBottomColor: '#ddd',
+    flexDirection : 'row'
   },
-  userName: {
-    fontSize: 18,
-    fontWeight: "bold",
+  avatar: {
+    marginBottom: 10,
   },
-  screensSection: {
-    flex: 1,
+  name: {
+    fontWeight: 'bold',
+  },
+  rating: {
+    flexDirection: 'row',
+    marginTop: 5,
   },
   logoutSection: {
-    borderTopWidth: 1,
-    borderTopColor: "#ccc",
-  },
+        borderTopWidth: 2,
+        borderTopColor: "#ccc",
+      },
 });
 
-export default CustomDrawerContent;

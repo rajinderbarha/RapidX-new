@@ -9,6 +9,7 @@ import MapViewComponent from "./MapViewComponent";
 import {driverData} from "../../../util/driverData";
 import { Image } from "react-native";
 import GifImage from "./GifImage";
+import { RideContext } from "../../store/RideContext";
 
 interface MapProps {
   location: {
@@ -21,6 +22,7 @@ interface MapProps {
 
 export default function Map({ reff, markerType }: MapProps) {
   const { pickedLocation, dropLocation } = useContext(LocationContext);
+  const { driver } = useContext(RideContext);
 
   function GreenLocation() {
     if (pickedLocation && dropLocation) {
@@ -44,14 +46,27 @@ export default function Map({ reff, markerType }: MapProps) {
 
   return (
     <MapViewComponent reff={reff} markerType={markerType}>
-      {pickedLocation && dropLocation && (
+      {!driver && pickedLocation && dropLocation && (
         <AddMapViewDirections
+        color="hotpink"
           reff={reff}
           origin={pickedLocation}
           destination={dropLocation}
         />
       )}
 
+
+      {driver && pickedLocation && dropLocation && (
+        <AddMapViewDirections
+        color="blue"
+          reff={reff}
+          origin={{
+            latitude : driver.latitude,
+            longitude : driver.longitude
+          }}
+          destination={pickedLocation}
+        />
+      )}
       
 
 

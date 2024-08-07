@@ -17,12 +17,14 @@ interface DirectionProps {
     longitude: number;
   };
   reff: any;
+  color : string
 }
 
 export default function AddMapViewDirections({
   origin,
   destination,
   reff,
+  color
 }: DirectionProps) {
   const diractionsRef = useRef();
   const { setDistance } = useContext(LocationContext);
@@ -41,8 +43,8 @@ export default function AddMapViewDirections({
         latitude: destination.latitude,
         longitude: destination.longitude,
       }}
-      strokeWidth={3}
-      strokeColor="hotpink"
+      strokeWidth={4}
+      strokeColor={color}
       optimizeWaypoints={true}
       apikey={GOOGLE_API_kEY}
       timePrecision="now"

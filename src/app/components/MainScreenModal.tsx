@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, Text, Pressable, View } from 'react-native';
 import CustomBottomModal from './CustomBottomModal';
+import { colors } from '../../../constants/colors';
 
 const TEXT = "Where are you going?";
 
@@ -46,6 +47,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1,
+  
   },
   input: {
     height: 43,
@@ -54,11 +56,13 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: 'space-between',
     alignItems: 'center',
-    elevation: 9,
+    // elevation: 9,
     flexDirection: 'row',
     marginLeft: 10,
     paddingHorizontal: 10,
     overflow: 'hidden',
+    borderColor : colors.primary,
+    borderWidth : 1
   },
   pressed: {
     backgroundColor: '#c9c3c3',
@@ -67,6 +71,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
+   
   },
   text: {
     color: 'grey',

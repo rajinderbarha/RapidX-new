@@ -6,8 +6,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { useContext, useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-
 import MainScreen from "./src/app/screens/MainScreen";
 import PickAndDropScreen from "./src/app/screens/PickAndDropScreen";
 import SelectLocationScreen from "./src/app/screens/SelectLocationsScreen";
@@ -19,14 +17,16 @@ import TermsConditionsScreen from "./src/app/screens/DrawerScreens/TermsConditio
 import PrivacyPolicyScreen from "./src/app/screens/DrawerScreens/PrivacyPolicy";
 import ContactUsScreen from "./src/app/screens/DrawerScreens/ContactUs";
 import CustomDrawerContent from "./src/app/components/CustomDrawerContent";
-import SelectLocationButton from "./src/app/components/SelectLocationButton";
-import AuthContextProvider, { AuthContext } from "./src/store/AuthContext";
+import AuthContextProvider from "./src/store/AuthContext";
 import LocationContextProvider from "./src/store/LocationContext";
 import CustomBackButton from "./src/ui/CustomBackButton";
-import LocalAuthProvider, { LocalAuthContext } from "./src/store/LocalAuthContext";
+import LocalAuthProvider, {
+  LocalAuthContext,
+} from "./src/store/LocalAuthContext";
 import { fetchToken } from "./util/localAPIs";
 import ProfileScreen from "./src/app/screens/ProfileScreen";
 import ProfileContextProvider from "./src/store/ProfileContext";
+import RideContextProvider from "./src/store/RideContext";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -117,7 +117,7 @@ function Navigation() {
         setToken(storedToken);
       }
     }
-    fetchingToken()
+    fetchingToken();
   }, []);
 
   return (
@@ -132,13 +132,15 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <LocalAuthProvider>
-      <AuthContextProvider>
-        <LocationContextProvider>
-          <ProfileContextProvider>
-          <Navigation />
-          </ProfileContextProvider>
-        </LocationContextProvider>
-      </AuthContextProvider>
+        <AuthContextProvider>
+          <LocationContextProvider>
+            <ProfileContextProvider>
+              <RideContextProvider>
+                <Navigation />
+              </RideContextProvider>
+            </ProfileContextProvider>
+          </LocationContextProvider>
+        </AuthContextProvider>
       </LocalAuthProvider>
     </GestureHandlerRootView>
   );
