@@ -52,9 +52,10 @@ const styles = StyleSheet.create({
   iconContainer: {
     height: 32,
     width: 32,
-    backgroundColor: colors.primary400,
+    backgroundColor: '#ffffff3a',
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex : 11
   },
 });

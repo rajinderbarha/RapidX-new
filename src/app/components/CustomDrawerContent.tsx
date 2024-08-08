@@ -1,16 +1,17 @@
 import React, { useContext, useState } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet, Alert, Pressable } from 'react-native';
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { Avatar, Icon, Text } from '@rneui/base';
 import { colors } from '../../../constants/colors';
 import LogoutModal from './LogoutModal';
 import { LocalAuthContext } from '../../store/LocalAuthContext';
 import { logout } from '../../../util/localAPIs';
+import { useNavigation } from '@react-navigation/native';
 
 export default function CustomDrawerContent(props : DrawerContentComponentProps) {
 
   const [isAlertVisible, setAlertVisible] = useState(false);
-
+  const navigation = useNavigation<any>()
   const { setToken } = useContext(LocalAuthContext);
 
   function toggleAlert() {
@@ -32,6 +33,7 @@ export default function CustomDrawerContent(props : DrawerContentComponentProps)
 
   return (<>
     <DrawerContentScrollView {...props}>
+      <Pressable onPress={()=>{navigation.navigate('Profile')}}>
       <View style={styles.header}>
         <View>
         <Avatar
@@ -50,6 +52,7 @@ export default function CustomDrawerContent(props : DrawerContentComponentProps)
         </View>
         </View>
       </View>
+      </Pressable>
       <DrawerItem
         label="Home"
         icon={() => <Icon name="home" type="font-awesome" color={colors.primary00} />}

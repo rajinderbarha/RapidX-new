@@ -9,8 +9,7 @@ import { Image } from "react-native";
 import { Avatar, Icon } from "@rneui/base";
 import { colors } from "../../../constants/colors";
 import OrangeButton from "../../ui/OrangeButton";
-import { RideContext } from "../../store/RideContext";
-import { LocationContext } from "../../store/LocationContext";
+
 
 interface BottomModalProps {
   onChange: (index: number) => void;
@@ -22,16 +21,10 @@ const OnBookedRideModal: React.FC<BottomModalProps> = ({
   isFocused,
 }) => {
   const navigation = useNavigation<any>();
-  const { setRideIsBooked, setDriver } = useContext(RideContext);
-  const { reset } = useContext(LocationContext);
+  
 
   const snapPoints = useMemo(() => ["30%", "62%"], []);
 
-  const onCancelRide = () => {
-    setRideIsBooked(false);
-    reset();
-    setDriver(null);
-  };
 
   const driver = {
     name: "Sidhu Moose Wala",
@@ -124,7 +117,7 @@ const OnBookedRideModal: React.FC<BottomModalProps> = ({
             <Text style={styles.totalAmount}>Total Amount:</Text>
             <Text style={styles.totalAmount}>{totalAmount}</Text>
           </View>
-          <OrangeButton text={"Cancel Ride"} onPress={onCancelRide}  style={{}} iconName={''} />
+          <OrangeButton text={"Cancel Ride"} onPress={()=>{navigation.navigate('Ride Cancel')}}  style={{}} iconName={''} />
         </View>
       </View>
     </CustomBottomModal>

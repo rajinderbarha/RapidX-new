@@ -27,6 +27,7 @@ import { fetchToken } from "./util/localAPIs";
 import ProfileScreen from "./src/app/screens/ProfileScreen";
 import ProfileContextProvider from "./src/store/ProfileContext";
 import RideContextProvider from "./src/store/RideContext";
+import RideCancelScreen from "./src/app/screens/RideCancelScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -80,6 +81,7 @@ function AuthenticatedStack() {
       />
       <Stack.Screen name="Locations" component={SelectLocationScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="Ride Cancel" component={RideCancelScreen} />
     </Stack.Navigator>
   );
 }
