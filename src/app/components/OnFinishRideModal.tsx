@@ -1,31 +1,27 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { StyleSheet, Text, Pressable, View } from "react-native";
+import { StyleSheet, Text, Pressable, View, Alert } from "react-native";
 import CustomBottomModal from "./CustomBottomModal";
 import { Image } from "react-native";
 import { Avatar, Icon } from "@rneui/base";
 import { colors } from "../../../constants/colors";
 import OrangeButton from "../../ui/OrangeButton";
+import RNPickerSelect from "react-native-picker-select";
 import { RideContext } from "../../store/RideContext";
-import { LocationContext } from "../../store/LocationContext";
-
 
 interface BottomModalProps {
   onChange: (index: number) => void;
   isFocused: boolean;
 }
 
-const OnBookedRideModal: React.FC<BottomModalProps> = ({
+export default function OnFinishRideModal({
   onChange,
   isFocused,
-}) => {
+}: BottomModalProps) {
   const navigation = useNavigation<any>();
-  const {setRideIsCompleted, driver } = useContext(RideContext)
-  const {reset} = useContext(LocationContext)
-
-  const snapPoints = useMemo(() => ["30%", "62%", '80%'], []);
-
-
+  const {driver, setPaymentIsDone} = useContext(RideContext)
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const snapPoints = useMemo(() => [ "69%", '90%'], []);
   const driverr = {
     name: "Sidhu Moose Wala",
     image: require("../../../assets/sidhu.jpg"), // You can replace this with a real image URL
@@ -43,13 +39,29 @@ const OnBookedRideModal: React.FC<BottomModalProps> = ({
     { name: "Logan Avenue", sub: "Aura" },
   ];
 
+  const paymentOptions = [
+    { label: "UPI/CARDS", value: "UPI/CARDS" },
+    { label: "Cash", value: "Cash" },
+    { label: "Wallet", value: "Wallet" },
+  ];
+
   const totalAmount = "$50.00";
 
-  function completedRideHandler(){
-    setRideIsCompleted(true)
-    reset()
-  };
-  
+  function payNowHandler() {
+    if (!paymentMethod) {
+      Alert.alert("Please select a payment method first");
+      return;
+    }
+
+    if (paymentMethod === "Cash") {
+      setPaymentIsDone(true)
+      Alert.alert("Paisa Paisa");
+    } else if (paymentMethod === "UPI/CARDS") {
+      navigation.navigate("Payment");
+    } else if (paymentMethod === "Wallet") {
+      Alert.alert("Please wait till we add a wallet feature");
+    }
+  }
 
   return (
     <CustomBottomModal
@@ -60,7 +72,7 @@ const OnBookedRideModal: React.FC<BottomModalProps> = ({
       <View style={styles.container}>
         <View style={styles.driverInfo}>
           <View style={styles.driverDetails}>
-            <Text style={styles.driverName}>{driver.name}</Text>
+            <Text style={styles.driverName}>{driver?.name}</Text>
             <View style={styles.rating}>
               {[...Array(driverr.rating)].map((_, i) => (
                 <Icon
@@ -80,9 +92,7 @@ const OnBookedRideModal: React.FC<BottomModalProps> = ({
         <View style={styles.vehicleInfo}>
           <Image source={driverr.vehicle.image} style={styles.vehicleImage} />
           <View style={styles.vehicleDetails}>
-            <Text style={styles.arrivalTime}>
-              Your Ride is Arriving in {driverr.arrivalTime}
-            </Text>
+            <Text style={styles.arrivalTime}>Your Ride is Finished.</Text>
             <Text style={styles.arrivalTime}>Bike Type</Text>
             <Text style={styles.vehicleType}>{driverr.vehicle.type}</Text>
             <Text style={styles.vehiclePlate}>{driverr.vehicle.plate}</Text>
@@ -105,9 +115,6 @@ const OnBookedRideModal: React.FC<BottomModalProps> = ({
               </View>
             </View>
           ))}
-          {/* <TouchableOpacity style={styles.addStopButton}>
-          <Text style={styles.addStopText}>Add Stop</Text>
-        </TouchableOpacity> */}
         </View>
 
         <View style={styles.footer}>
@@ -123,13 +130,33 @@ const OnBookedRideModal: React.FC<BottomModalProps> = ({
             <Text style={styles.totalAmount}>Total Amount:</Text>
             <Text style={styles.totalAmount}>{totalAmount}</Text>
           </View>
-          <OrangeButton text={"Cancel Ride"} onPress={()=>{navigation.navigate('Ride Cancel')}}  style={{}} iconName={''} />
-      <OrangeButton text="Completed" onPress={completedRideHandler} iconName={''} style={{backgroundColor : 'green'}}/>
+          <View style={styles.paymentContainer}>
+            <View style={{ flex: 1 }}>
+              <RNPickerSelect
+                onValueChange={(value) => setPaymentMethod(value)}
+                items={paymentOptions}
+                //   placeholder={{
+                //     label : "UPI/CARDS",
+                //     value : "UPI/CARDS"
+                //   }}
+                style={pickerSelectStyles}
+              />
+            </View>
+
+            <View style={{ flex: 2 }}>
+              <OrangeButton
+                text={"Pay now"}
+                onPress={payNowHandler}
+                style={{ backgroundColor: "#33a823" }}
+                iconName={""}
+              />
+            </View>
+          </View>
         </View>
       </View>
     </CustomBottomModal>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -145,6 +172,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     padding: 10,
+    // paddingTop : 0,
     borderTopLeftRadius: 12,
     overflow: "hidden",
     borderTopRightRadius: 12,
@@ -230,17 +258,34 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
-  cancelButton: {
-    backgroundColor: "orange",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
+  paymentContainer: {
+    flexDirection: "row",
     marginTop: 10,
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    color: "white",
   },
 });
 
-export default OnBookedRideModal;
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 4,
+    color: "black",
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+  inputAndroid: {
+    fontSize: 20,
+    fontWeight: "bold",
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    height: 60,
+    // borderWidth: 2,
+    // borderColor: "purple",
+    // borderRadius: 8,
+    color: "black",
+    paddingRight: 10, // to ensure the text is never behind the icon
+    // backgroundColor : colors.primary,
+  },
+});

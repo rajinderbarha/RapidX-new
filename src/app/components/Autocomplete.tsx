@@ -116,7 +116,7 @@ export default function AutoComplete() {
                 onPress={(data, details = null) => {
                   const placeID = details?.place_id;
                   placeID && setPlaceId(placeID);
-                  console.log(details);
+                  // console.log(details);
                 }}
                 query={query}
               />

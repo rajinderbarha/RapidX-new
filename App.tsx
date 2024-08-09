@@ -11,7 +11,6 @@ import PickAndDropScreen from "./src/app/screens/PickAndDropScreen";
 import SelectLocationScreen from "./src/app/screens/SelectLocationsScreen";
 import WelcomeScreen from "./src/auth/screens/WelcomeScreen";
 import AuthScreen from "./src/auth/screens/AuthScreen";
-import PaymentScreen from "./src/app/screens/DrawerScreens/Payment";
 import AboutUsScreen from "./src/app/screens/DrawerScreens/AboutUs";
 import TermsConditionsScreen from "./src/app/screens/DrawerScreens/TermsConditions";
 import PrivacyPolicyScreen from "./src/app/screens/DrawerScreens/PrivacyPolicy";
@@ -28,6 +27,8 @@ import ProfileScreen from "./src/app/screens/ProfileScreen";
 import ProfileContextProvider from "./src/store/ProfileContext";
 import RideContextProvider from "./src/store/RideContext";
 import RideCancelScreen from "./src/app/screens/RideCancelScreen";
+import MyTripScreen from "./src/app/screens/DrawerScreens/MyTrip";
+import PaymentScreen from "./src/app/screens/PaymentScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -82,6 +83,7 @@ function AuthenticatedStack() {
       <Stack.Screen name="Locations" component={SelectLocationScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="Ride Cancel" component={RideCancelScreen} />
+      <Stack.Screen name="Payment" component={PaymentScreen} />
     </Stack.Navigator>
   );
 }
@@ -96,7 +98,7 @@ function DrawerNavigator() {
         component={AuthenticatedStack}
         options={{ headerShown: false }}
       />
-      <Drawer.Screen name="Payment" component={PaymentScreen} />
+      <Drawer.Screen name="Trips" component={MyTripScreen} />
       <Drawer.Screen name="About Us" component={AboutUsScreen} />
       <Drawer.Screen
         name="Terms & Conditions"

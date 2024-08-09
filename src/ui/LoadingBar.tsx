@@ -7,6 +7,7 @@ import Animated, {
   withRepeat,
   withSpring,
 } from "react-native-reanimated";
+import { colors } from "../../constants/colors";
 
 const LoadingBar = () => {
   const progress = useSharedValue(0);
@@ -32,7 +33,7 @@ const LoadingBar = () => {
           progress={1}
           width={200}
           height={10}
-          color="blue"
+          color= {colors.primary}
           borderWidth={0}
           unfilledColor="transparent"
         />

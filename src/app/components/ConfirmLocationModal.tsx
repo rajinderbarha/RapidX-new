@@ -42,12 +42,16 @@ export default function ConfirmLocationModal({
 
   const newDriver = getDriver(driverData)
 
+  useEffect(() => {
+    console.log('driver : ' , driver)
+  }, [driver]);
+
 
 
   useEffect(() => {
     if (rideIsBooked) {
+      setDriver(newDriver)
       const timer = setTimeout(() => {
-        setDriver(newDriver)
         navigation.navigate("Main");
       }, 5000);
 
@@ -82,7 +86,7 @@ export default function ConfirmLocationModal({
 
       {rideIsBooked && (
         <View style={styles.container}>
-          <LoadingBar />
+          <LoadingBar  />
           <Text style={{marginTop : 5, fontWeight: '500'}}>Assigning you a driver. Please wait...</Text>
         </View>
       )}

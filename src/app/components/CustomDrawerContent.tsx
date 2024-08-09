@@ -59,9 +59,9 @@ export default function CustomDrawerContent(props : DrawerContentComponentProps)
         onPress={() => props.navigation.navigate('Home')}
       />
       <DrawerItem
-        label="Payment"
-        icon={() => <Icon name="credit-card" type="font-awesome"  color={colors.primary00}/>}
-        onPress={() => props.navigation.navigate('Payment')}
+        label="My Trips"
+        icon={() => <Icon name="suitcase" type="font-awesome"  color={colors.primary00}/>}
+        onPress={() => props.navigation.navigate('Trips')}
       />
       <DrawerItem
         label="About Us"
@@ -71,7 +71,7 @@ export default function CustomDrawerContent(props : DrawerContentComponentProps)
       <DrawerItem
         label="Terms & Conditions"
         icon={() => <Icon name="file-text" type="font-awesome" color={colors.primary00} />}
-        onPress={() => props.navigation.navigate('About Us')}
+        onPress={() => props.navigation.navigate('Terms & Conditions')}
       />
       <DrawerItem
         label="Privacy Policy"

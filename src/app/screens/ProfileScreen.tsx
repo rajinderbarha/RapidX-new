@@ -1,52 +1,58 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
-import { Avatar, Button } from '@rneui/base';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import OrangeButton from '../../ui/OrangeButton';
-import { colors } from '../../../constants/colors';
-// import ImagePicker from 'react-native-image-picker';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { Avatar, Button } from "@rneui/base";
+import Icon from "react-native-vector-icons/FontAwesome";
+import OrangeButton from "../../ui/OrangeButton";
+import { colors } from "../../../constants/colors";
+import { launchImageLibrary } from "react-native-image-picker";
+import { useNavigation } from "@react-navigation/native";
 
 const profile = {
-  picture: require('../../../assets/sidhu.jpg'),
-  firstName: 'Moose',
-  lastName: 'Wala',
-  email: 'info@rapidx.com',
-  phone: '+1-9654-963-258',
+  picture: require("../../../assets/sidhu.jpg"),
+  firstName: "Moose",
+  lastName: "Wala",
+  email: "info@rapidx.com",
+  phone: "+1-9654-963-258",
 };
 
-
-
-const ProfileScreen = () => {
+export default function ProfileScreen() {
   const [firstName, setFirstName] = useState(profile.firstName);
   const [lastName, setLastName] = useState(profile.lastName);
   const [email, setEmail] = useState(profile.email);
   const [phone, setPhone] = useState(profile.phone);
   const [picture, setPicture] = useState(profile.picture);
 
-  const onUpdate = (updatedProfile) => {
-    console.log('Updated Profile:', updatedProfile);
+  const navigation = useNavigation();
+
+  const onUpdate = (updatedProfile: any) => {
+    console.log("Updated Profile:", updatedProfile);
   };
 
-
   const selectProfilePicture = () => {
-    // const options = {
-    //   title: 'Select Profile Picture',
-    //   storageOptions: {
-    //     skipBackup: true,
-    //     path: 'images',
-    //   },
-    // };
+    const options: any = {
+      mediaType: "photo", // This is required
+      maxWidth: 300, // Optional: Resizes the selected image
+      maxHeight: 300, // Optional: Resizes the selected image
+      quality: 0.8, // Optional: Image quality (0 to 1)
+      includeBase64: false, // Optional: If true, returns the base64 string of the image
+    };
 
-    // ImagePicker.showImagePicker(options, (response) => {
-    //   if (response.didCancel) {
-    //     console.log('User cancelled image picker');
-    //   } else if (response.error) {
-    //     console.log('ImagePicker Error: ', response.error);
-    //   } else {
-    //     const source = { uri: response.uri };
-    //     setPicture(source.uri);
-    //   }
-    // });
+    launchImageLibrary(options, (response: any) => {
+      if (response.didCancel) {
+        console.log("User cancelled image picker");
+      } else if (response.errorCode) {
+        console.log("ImagePicker Error: ", response.errorCode);
+      } else {
+        const source = { uri: response.assets[0].uri };
+        setPicture(source.uri);
+      }
+    });
   };
 
   const handleUpdate = () => {
@@ -58,6 +64,7 @@ const ProfileScreen = () => {
       phone,
     };
     onUpdate(updatedProfile);
+    navigation.goBack();
   };
 
   return (
@@ -119,21 +126,25 @@ const ProfileScreen = () => {
           </View>
         </View>
       </View>
-<View style={{marginTop : '40%'}}>
-      <OrangeButton text='Save Changes' iconName={''} onPress={handleUpdate} />
+      <View style={{ marginTop: "40%" }}>
+        <OrangeButton
+          text="Save Changes"
+          iconName={""}
+          onPress={handleUpdate}
+        />
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingBottom: 20,
   },
   avatar: {
@@ -151,38 +162,36 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 5,
   },
   input: {
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: "#ccc",
     fontSize: 18,
     paddingVertical: 5,
   },
   emailContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   unverifiedText: {
-    color: 'red',
-    fontWeight: '600',
+    color: "red",
+    fontWeight: "600",
   },
   phoneContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   verifiedText: {
-    color: 'green',
-    fontWeight: '600',
+    color: "green",
+    fontWeight: "600",
   },
   updateButton: {
-    backgroundColor: '#f44336',
+    backgroundColor: "#f44336",
     borderRadius: 25,
     paddingVertical: 15,
   },
 });
-
-export default ProfileScreen;

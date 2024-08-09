@@ -23,13 +23,17 @@ import MainScreenModal from "../components/MainScreenModal";
 import OnBookedRideModal from "../components/OnBookedRideModal";
 import { RideContext } from "../../store/RideContext";
 import { driverData } from "../../../util/driverData";
+import OnFinishRideModal from "../components/OnFinishRideModal";
+import TripReviewModal from "../components/TripReviewModal";
+
+
 
 const { height } = Dimensions.get("screen");
 
 export default function MainScreen() {
   const navigation = useNavigation() as any;
   const { location, reset } = useContext(LocationContext);
-  const { rideIsBooked } = useContext(RideContext);
+  const { rideIsBooked, rideIsCompleted, paymentIsDone,setRideIsCompleted, driver } = useContext(RideContext);
   const mapRef = useRef<MapView>(null);
   const [buttonBottomPosition, setButtonBottomPosition] = useState(20);
   const isFocused = useIsFocused();
@@ -53,7 +57,7 @@ export default function MainScreen() {
     }
   }
 
-  if (!rideIsBooked) {
+  
     return (
       <BottomSheetModalProvider>
         <View style={styles.container}>
@@ -72,30 +76,13 @@ export default function MainScreen() {
             style={{ bottom: buttonBottomPosition }}
           />
         </View>
-        <MainScreenModal onChange={handleModalChange} isFocused={isFocused} />
+       {!rideIsBooked && !rideIsCompleted && <MainScreenModal onChange={handleModalChange} isFocused={isFocused} />}
+       {rideIsBooked  && driver &&<OnBookedRideModal onChange={handleModalChange} isFocused={isFocused} />}
+       {rideIsCompleted  && <OnFinishRideModal onChange={handleModalChange} isFocused={isFocused} />}
+       {paymentIsDone  && <TripReviewModal onChange={handleModalChange} isFocused={isFocused} />}
       </BottomSheetModalProvider>
     );
-  } else {
-    return (
-      <BottomSheetModalProvider>
-        <View style={styles.container}>
-          <View style={styles.mapContainer}>
-            <Map
-              markerType={"pickUp"}
-              location={location?.coords || null}
-              reff={mapRef}
-            />
-          </View>
-          <MyLocationButton
-            onPress={myLocationButtonHandler}
-            style={{ bottom: buttonBottomPosition }}
-          />
-        </View>
-        <OnBookedRideModal onChange={handleModalChange} isFocused={isFocused} />
-      </BottomSheetModalProvider>
-    );
-  }
-}
+  } 
 
 const styles = StyleSheet.create({
   container: {

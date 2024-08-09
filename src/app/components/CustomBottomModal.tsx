@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#f1f1f1",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    borderWidth: 10,
-    borderColor: "#ffffff",
+    // borderWidth: 10,
+    // borderColor: "#ffffff",
   },
   handleIndicator: {
     backgroundColor: "#a3a3a3",

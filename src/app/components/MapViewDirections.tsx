@@ -54,7 +54,7 @@ export default function AddMapViewDirections({
         );
       }}
       onReady={(result) => {
-        console.log(result);
+        // console.log(result);
         const distance = result.distance.toFixed(2);
         setDistance(distance);
         console.log(`Distance: ${result.distance} km`);
