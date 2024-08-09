@@ -1,5 +1,6 @@
+// @ts-ignore
+import RazorpayCheckout from 'react-native-razorpay';
 import { Text, TouchableHighlight, View } from "react-native";
-import  RazorpayCheckout  from 'react-native-razorpay' ;
 import { colors } from "../../../constants/colors";
 
 export default function PaymentScreen(){
@@ -11,8 +12,10 @@ export default function PaymentScreen(){
     image: 'https://i.imgur.com/3g7nmJC.png',
     currency: 'INR',
     key: 'rzp_test_6tjQDUkOZcmRhZ', // Your api key
-    amount: '5000',
+  
+    amount: 500,
     name: 'foo',
+    order_id : '',
     prefill: {
       email: 'void@razorpay.com',
       contact: '9191919191',
