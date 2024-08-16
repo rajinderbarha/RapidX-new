@@ -1,11 +1,13 @@
 import { useContext, useRef } from "react";
 import { Dimensions } from "react-native";
 import MapViewDirections from "react-native-maps-directions";
-import { LocationContext } from "../../store/LocationContext";
-import MapData from "../../../util/mapApis";
+import { LocationContext } from "../../../store/LocationContext";
+import MapData from "../../../../util/mapApis";
 
 const GOOGLE_API_kEY = "AIzaSyCV2NRNl0uVeY37ID1gIoYgJexr9SBDn2Q";
 const { width, height } = Dimensions.get("window");
+
+const user_id = '66b1c305d27b9a0a022c6005'
 
 interface DirectionProps {
   origin: {
@@ -60,7 +62,9 @@ export default function AddMapViewDirections({
         console.log(`Distance: ${result.distance} km`);
         console.log(`Duration: ${result.duration} min.`);
         async function sendData() {
+          console.log('fetching fare')
           const fare = await MapData(
+            user_id,
             origin,
             destination,
             result.distance,

@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, Text, Pressable, View } from 'react-native';
 import CustomBottomModal from './CustomBottomModal';
-import { colors } from '../../../constants/colors';
+import { colors } from '../../../../constants/colors';
 
 const TEXT = "Where are you going?";
 

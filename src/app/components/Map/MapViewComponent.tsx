@@ -6,8 +6,9 @@ import React, {
 } from "react";
 import { Alert, Dimensions, StyleSheet, View } from "react-native";
 import MapView from "react-native-maps";
-import { LocationContext } from "../../store/LocationContext";
-import getAddress from "../../../util/location";
+import { LocationContext } from "../../../store/LocationContext";
+import getAddress from "../../../../util/location";
+import { RideContext } from "../../../store/RideContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -41,6 +42,8 @@ export default function MapViewComponent({
     dropLocation,
     setDropAddress,
   } = useContext(LocationContext);
+
+  const { rideIsBooked, rideIsStarted } = useContext(RideContext);
 
   useEffect(() => {
     if (location) {
@@ -90,14 +93,20 @@ export default function MapViewComponent({
       <MapView
         style={styles.map}
         initialRegion={initialRegion}
-        onPress={markerType === "drop" ? dropLocationPicker : locationPicker}
+        onPress={
+          rideIsBooked || rideIsStarted
+            ? ()=>{return}
+            : markerType === "drop"
+            ? dropLocationPicker
+            : locationPicker
+        }
         showsUserLocation={true}
         followsUserLocation={true}
         showsMyLocationButton={false}
         ref={reff}
         showsBuildings={false}
         onMarkerPress={
-          markerType === "drop" 
+          markerType === "drop"
             ? () => setDropLocation(null)
             : () => setPickedLocation(null)
         }

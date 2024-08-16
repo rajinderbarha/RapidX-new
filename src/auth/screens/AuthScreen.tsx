@@ -133,7 +133,7 @@ export default function AuthScreen() {
           )} */}
         </View>
       </ScrollView>
-      <OrangeButton text={"Send"} onPress={handelSignIn} />
+      <OrangeButton iconName={''} text={"Send"} onPress={handelSignIn} />
 
       {/* {!confirm && !user &&(
         <OrangeButton text={"Send"} onPress={handelSignIn} />

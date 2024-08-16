@@ -3,7 +3,7 @@ import { View, StyleSheet, Alert, Pressable } from 'react-native';
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
 import { Avatar, Icon, Text } from '@rneui/base';
 import { colors } from '../../../constants/colors';
-import LogoutModal from './LogoutModal';
+import LogoutModal from './OnScreenModals/LogoutModal';
 import { LocalAuthContext } from '../../store/LocalAuthContext';
 import { logout } from '../../../util/localAPIs';
 import { useNavigation } from '@react-navigation/native';
@@ -55,32 +55,32 @@ export default function CustomDrawerContent(props : DrawerContentComponentProps)
       </Pressable>
       <DrawerItem
         label="Home"
-        icon={() => <Icon name="home" type="font-awesome" color={colors.primary00} />}
+        icon={() => <Icon name="home" type="font-awesome" color={colors.primary00} style = {styles.icons} />}
         onPress={() => props.navigation.navigate('Home')}
       />
       <DrawerItem
         label="My Trips"
-        icon={() => <Icon name="suitcase" type="font-awesome"  color={colors.primary00}/>}
+        icon={() => <Icon name="suitcase" type="font-awesome"  color={colors.primary00} style = {styles.icons}/>}
         onPress={() => props.navigation.navigate('Trips')}
       />
       <DrawerItem
         label="About Us"
-        icon={() => <Icon name="info-circle" type="font-awesome" color={colors.primary00} />}
+        icon={() => <Icon name="info-circle" type="font-awesome" color={colors.primary00} style = {styles.icons} />}
         onPress={() => props.navigation.navigate('About Us')}
       />
       <DrawerItem
         label="Terms & Conditions"
-        icon={() => <Icon name="file-text" type="font-awesome" color={colors.primary00} />}
+        icon={() => <Icon name="file-text" type="font-awesome" color={colors.primary00} style = {styles.icons} />}
         onPress={() => props.navigation.navigate('Terms & Conditions')}
       />
       <DrawerItem
         label="Privacy Policy"
-        icon={() => <Icon name="shield" type="font-awesome" color={colors.primary00} />}
+        icon={() => <Icon name="shield" type="font-awesome" color={colors.primary00} style = {styles.icons} />}
         onPress={() => props.navigation.navigate('Privacy Policy')}
       />
       <DrawerItem
         label="Contact Us"
-        icon={() => <Icon name="phone" type="font-awesome" color={colors.primary00} />}
+        icon={() => <Icon name="phone" type="font-awesome" color={colors.primary00} style = {styles.icons} />}
         onPress={() => props.navigation.navigate('Contact Us')}
       />
     </DrawerContentScrollView>
@@ -102,14 +102,16 @@ export default function CustomDrawerContent(props : DrawerContentComponentProps)
 const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'flex-start',
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
-    flexDirection : 'row'
+    flexDirection : 'row',
+    // backgroundColor : 'red'
   },
   avatar: {
     marginBottom: 10,
+    marginRight : 20
   },
   name: {
     fontWeight: 'bold',
@@ -122,5 +124,8 @@ const styles = StyleSheet.create({
         borderTopWidth: 2,
         borderTopColor: "#ccc",
       },
+  icons : {
+    marginLeft : 10
+  }
 });
 

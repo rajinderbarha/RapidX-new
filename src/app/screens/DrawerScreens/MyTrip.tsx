@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import RideItemComponent from "../../components/RideItemComponent";
+import RideItemComponent from "../../components/MyRides/RideItemComponent";
 
 export default function MyTripScreen(){
   return (

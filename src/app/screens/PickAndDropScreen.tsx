@@ -3,9 +3,9 @@ import { StyleSheet, View } from 'react-native';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import MapView from 'react-native-maps';
-import PickAndDropLocation from '../components/PickAndDropLocation';
-import Map from '../components/Map';
-import ConfirmLocationModal from '../components/ConfirmLocationModal';
+import PickAndDropLocation from '../components/OnScreenModals/PickAndDropLocation';
+import Map from '../components/Map/Map';
+import ConfirmLocationModal from '../components/BottomModals/ConfirmLocationModal';
 import { LocationContext } from '../../store/LocationContext';
 
 export default function PickAndDropScreen() {

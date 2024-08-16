@@ -1,65 +1,113 @@
-import axios from "axios";
+// import axios from "axios";
+
+// export default async function MapData(
+//   user_id: string,
+//   origin: {
+//     latitude: number;
+//     longitude: number;
+//   },
+//   destination: {
+//     latitude: number;
+//     longitude: number;
+//   },
+//   distance: number,
+//   duration: number,
+//   pickupAddress: string,
+//   dropAddress: string
+// ) {
+//   const URL =
+//     "https://rw6v05jh-8000.inc1.devtunnels.ms/api/users/ride-book-user";
+//   //gets fare price
+//   try {
+//     const response = await axios.post(
+//       URL,
+//       {
+//         user_id: user_id,
+//         user_origin: origin,
+//         user_destination: destination,
+//         distance: distance,
+//         duration: duration,
+//         dropAddress: dropAddress,
+//         pickupAddress: pickupAddress,
+//       },
+//       {
+//         headers: {
+//           Authorization:
+//             "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YjJmZTg4YzdkNWQ0NzljYWIzM2EyYyIsImlhdCI6MTcyMzQ0Mjg0MywiZXhwIjoxNzI2MDM0ODQzfQ.FSpBpqBYYC1gtWIjfci4N3WI7dtwHpba-uQc_MvEjhU",
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
+
+//     console.log("response: ", response.data);
+
+//     return response.data.fares;
+//   } catch (error) {
+//     console.log("error in mapData : ", error);
+//   }
+
+//   return;
+// }
+
 
 export default async function MapData(
-  origin: any,
-  destination: any,
-  distance: any,
-  duration: any,
-  pickupAddress: any,
-  dropAddress: any
+  user_id: string,
+  origin: {
+    latitude: number;
+    longitude: number;
+  },
+  destination: {
+    latitude: number;
+    longitude: number;
+  },
+  distance: number,
+  duration: number,
+  pickupAddress: string,
+  dropAddress: string
 ) {
-  const URL = "https://rw6v05jh-8000.inc1.devtunnels.ms/api/users/fares";
-
+  const URL = "https://rw6v05jh-8000.inc1.devtunnels.ms/api/users/ride-book-user";
+  
   try {
-    const response = await axios.post(URL, {
-      origin: origin,
-      destination: destination,
-      distance: distance,
-      duration: duration,
-      dropAddress: dropAddress,
-      pickupAddress: pickupAddress,
+    const response = await fetch(URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YjJmZTg4YzdkNWQ0NzljYWIzM2EyYyIsImlhdCI6MTcyMzQ0Mjg0MywiZXhwIjoxNzI2MDM0ODQzfQ.FSpBpqBYYC1gtWIjfci4N3WI7dtwHpba-uQc_MvEjhU',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id: user_id,
+        user_origin: origin,
+        user_destination: destination,
+        distance: distance,
+        duration: duration,
+        dropAddress: dropAddress,
+        pickupAddress: pickupAddress,
+      }),
     });
 
-    return response.data.fare;
-  } catch (error) {
-    console.log("error in mapData : ", error);
+    if (!response.ok) {
+      // Handle HTTP errors
+      const errorText = await response.text();
+      console.error(`HTTP error! Status: ${response.status}, Message: ${errorText}`);
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.rideDetails || typeof data.rideDetails.fares !== 'number') {
+      // Handle missing or incorrect data
+      console.error('Expected "fares" in "rideDetails" but got:', data);
+      throw new Error('Missing or invalid "fares" in response data.');
+    }
+
+    // console.log("response: ", data);
+
+    return data.rideDetails.fares;
+  } catch (error : any) {
+    // Log detailed error information
+    console.error("Error in mapData: ", error.message);
+    console.error("Stack trace: ", error.stack);
   }
 
   return;
 }
-
- // {
-    //     "driver_id": 9,
-    //     "name": "Driver Nine",
-    //     "latitude": 30.7280,
-    //     "longitude": 76.7050,
-    //     "distance_from_user_km": 2.0
-    // },
-    // {
-    //     "driver_id": 10,
-    //     "name": "Driver Ten",
-    //     "latitude": 30.7380,
-    //     "longitude": 76.7150,
-    //     "distance_from_user_km": 3.2
-    // }
-    // {
-    //     "driver_id": 1,
-    //     "name": "Driver One",
-    //     "latitude": 30.7200,
-    //     "longitude": 76.7000,
-    //     "distance_from_user_km": 1.5
-    // },
-    // {
-    //     "driver_id": 2,
-    //     "name": "Driver Two",
-    //     "latitude": 30.7300,
-    //     "longitude": 76.7100,
-    //     "distance_from_user_km": 2.5
-    // },
-    // {
-    //     "driver_id": 3,
-    //     "name": "Driver Three",
-    //     "latitude": 30.7400,
-    //     "longitude": 76.7200,
-    //     "distance_from_user_km": 3.5
-    // },

@@ -1,14 +1,16 @@
 import React, { useContext, useEffect } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import IconButton from "../../ui/IconButton";
-import getAddress from "../../../util/location";
-import { LocationContext } from "../../store/LocationContext";
+import IconButton from "../../../ui/IconButton";
+import getAddress from "../../../../util/location";
+import { LocationContext } from "../../../store/LocationContext";
 import { useNavigation } from "@react-navigation/native";
+import { RideContext } from "../../../store/RideContext";
 
 export default function MainHeader() {
   const { pickedLocation, location, pickupAddress, setPickupAddress } =
     useContext(LocationContext);
+    const {rideIsBooked, rideIsStarted} = useContext(RideContext)
   const navigation = useNavigation<any>();
 
   useEffect(() => {
@@ -44,6 +46,7 @@ export default function MainHeader() {
         />
       </View>
       <Pressable
+      disabled={(rideIsBooked || rideIsStarted)}
         style={({ pressed }) => [
           styles.input,
           pressed && styles.pressedInput,

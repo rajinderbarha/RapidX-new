@@ -6,8 +6,8 @@ import React, {
   useState,
 } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
-import MainHeader from "../components/MainHeader";
-import Map from "../components/Map";
+import MainHeader from "../components/HEADER/MainHeader";
+import Map from "../components/Map/Map";
 import MyLocationButton from "../../ui/MyLocationButton";
 import MapView from "react-native-maps";
 import { LocationContext } from "../../store/LocationContext";
@@ -18,13 +18,13 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import CustomBottomModal from "../components/CustomBottomModal";
-import MainScreenModal from "../components/MainScreenModal";
-import OnBookedRideModal from "../components/OnBookedRideModal";
+import CustomBottomModal from "../components/BottomModals/CustomBottomModal";
+import MainScreenModal from "../components/BottomModals/MainScreenModal";
+import OnBookedRideModal from "../components/BottomModals/OnBookedRideModal";
 import { RideContext } from "../../store/RideContext";
 import { driverData } from "../../../util/driverData";
-import OnFinishRideModal from "../components/OnFinishRideModal";
-import TripReviewModal from "../components/TripReviewModal";
+import OnFinishRideModal from "../components/BottomModals/OnFinishRideModal";
+import TripReviewModal from "../components/BottomModals/TripReviewModal";
 
 
 

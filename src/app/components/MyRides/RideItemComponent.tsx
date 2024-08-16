@@ -33,12 +33,12 @@ export default function RideItemComponent({
       <View style={{ flexDirection: "row" }}>
         <View style={[styles.imageContainer]}>
           <Image
-            source={require("../../../assets/data/greenCircle.png")}
+            source={require("../../../../assets/data/greenCircle.png")}
             style={styles.circleImage}
           />
           <View style={styles.verticalLine}></View>
           <Image
-            source={require("../../../assets/data/redCircle.png")}
+            source={require("../../../../assets/data/redCircle.png")}
             style={styles.circleImage}
           />
         </View>

@@ -1,15 +1,15 @@
 import React, { useContext, useEffect, useRef, useState, useMemo } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import SelectLocationButton from "./SelectLocationButton";
 import { LocationContext } from "../../store/LocationContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import getAddress, { getCoords } from "../../../util/location";
 import MyLocationButton from "../../ui/MyLocationButton";
-import MapViewComponent from "./MapViewComponent";
+import MapViewComponent from "./Map/MapViewComponent";
 import MapView from "react-native-maps";
-import AddMarker from "./AddMarker";
+import AddMarker from "./Map/AddMarker";
 import { TouchableOpacity } from "react-native";
+import SelectLocationButton from "../../ui/SelectLocationButton";
 
 export default function AutoComplete() {
   const ref = useRef<any>(null);

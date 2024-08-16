@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useRef } from 'react';
 import { Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { GooglePlacesAutocompleteRef } from 'react-native-google-places-autocomplete';
-import { LocationContext } from '../../store/LocationContext';
+import { LocationContext } from '../../../store/LocationContext';
 
 interface DropProps {
   pickOnMap: boolean;
@@ -38,12 +38,12 @@ export default function PickAndDropLocation() {
     <View style={styles.rootContainer}>
       <View style={styles.imageContainer}>
         <Image
-          source={require("../../../assets/data/greenCircle.png")}
+          source={require("../../../../assets/data/greenCircle.png")}
           style={styles.circleImage}
         />
         <View style={styles.verticalLine}></View>
         <Image
-          source={require("../../../assets/data/redCircle.png")}
+          source={require("../../../../assets/data/redCircle.png")}
           style={styles.circleImage}
         />
       </View>

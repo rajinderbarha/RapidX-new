@@ -1,8 +1,8 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
 import { Text, View } from "react-native";
 import Modal from "react-native-modal";
-import SelectLocationButton from "./SelectLocationButton";
-import OrangeButton from "../../ui/OrangeButton";
+import OrangeButton from "../../../ui/OrangeButton";
+import SelectLocationButton from "../../../ui/SelectLocationButton";
 
 export default function LogoutModal({ isVisible, onClose, onConfirm }: any) {
   return (

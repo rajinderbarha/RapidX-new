@@ -4,10 +4,12 @@ import { StyleSheet, Text, Pressable, View, Alert } from "react-native";
 import CustomBottomModal from "./CustomBottomModal";
 import { Image } from "react-native";
 import { Avatar, Icon } from "@rneui/base";
-import { colors } from "../../../constants/colors";
-import OrangeButton from "../../ui/OrangeButton";
+import { colors } from "../../../../constants/colors";
+import OrangeButton from "../../../ui/OrangeButton";
 import RNPickerSelect from "react-native-picker-select";
-import { RideContext } from "../../store/RideContext";
+import { RideContext } from "../../../store/RideContext";
+import { LocationContext } from "../../../store/LocationContext";
+import getShortAddress from "../../../../util/getShortAddress";
 
 interface BottomModalProps {
   onChange: (index: number) => void;
@@ -19,20 +21,14 @@ export default function OnFinishRideModal({
   isFocused,
 }: BottomModalProps) {
   const navigation = useNavigation<any>();
-  const {driver, setPaymentIsDone} = useContext(RideContext)
+  const { setPaymentIsDone, driver } = useContext(RideContext);
+  const { pickupAddress, dropAddress, reset, fare } = useContext(LocationContext);
   const [paymentMethod, setPaymentMethod] = useState("");
-  const snapPoints = useMemo(() => [ "69%", '90%'], []);
-  const driverr = {
-    name: "Sidhu Moose Wala",
-    image: require("../../../assets/sidhu.jpg"), // You can replace this with a real image URL
-    rating: 5,
-    arrivalTime: "2.95 min",
-    vehicle: {
-      image: require("../../../assets/data/pulsor.png"), // You can replace this with a real image URL
-      type: "5911",
-      plate: "G5-567-JH",
-    },
-  };
+  const snapPoints = useMemo(() => ["69%", "90%"], []);
+
+
+  const shortPickupAddress = getShortAddress(pickupAddress);
+  const shortDropAddress = getShortAddress(dropAddress);
 
   const tripRoute = [
     { name: "Douglas Crescent Road", sub: "Venie" },
@@ -54,7 +50,8 @@ export default function OnFinishRideModal({
     }
 
     if (paymentMethod === "Cash") {
-      setPaymentIsDone(true)
+      setPaymentIsDone(true);
+      reset();
       Alert.alert("Paisa Paisa");
     } else if (paymentMethod === "UPI/CARDS") {
       navigation.navigate("Payment");
@@ -74,7 +71,7 @@ export default function OnFinishRideModal({
           <View style={styles.driverDetails}>
             <Text style={styles.driverName}>{driver?.name}</Text>
             <View style={styles.rating}>
-              {[...Array(driverr.rating)].map((_, i) => (
+              {[...Array(driver?.rating)].map((_, i) => (
                 <Icon
                   key={i}
                   name="star"
@@ -86,35 +83,44 @@ export default function OnFinishRideModal({
               ))}
             </View>
           </View>
-          <Avatar rounded size="medium" source={driverr.image} />
+          <Avatar rounded size="medium" source={{uri : driver?.profile_picture }} />
         </View>
 
         <View style={styles.vehicleInfo}>
-          <Image source={driverr.vehicle.image} style={styles.vehicleImage} />
+          <Image source={{uri : driver?.vehicle_image}} style={styles.vehicleImage} />
           <View style={styles.vehicleDetails}>
             <Text style={styles.arrivalTime}>Your Ride is Finished.</Text>
             <Text style={styles.arrivalTime}>Bike Type</Text>
-            <Text style={styles.vehicleType}>{driverr.vehicle.type}</Text>
-            <Text style={styles.vehiclePlate}>{driverr.vehicle.plate}</Text>
+            <Text style={styles.vehicleType}>{driver?.vehicle_type}</Text>
+            <Text style={styles.vehiclePlate}>{driver?.vehicle_plate}</Text>
           </View>
         </View>
 
         <View style={styles.tripRoute}>
           <Text style={styles.routeTitle}>Trip Route</Text>
-          {tripRoute.map((route, index) => (
-            <View key={index} style={styles.routeItem}>
-              <Icon
-                name={"dot-single"}
-                type="entypo"
-                color={index === 0 ? "green" : colors.primary400}
-                size={40}
-              />
-              <View style={styles.routeDetails}>
-                <Text style={styles.routeName}>{route.name}</Text>
-                <Text style={styles.routeSub}>{route.sub}</Text>
-              </View>
+
+          <View style={styles.routeItem}>
+            <Icon name={"dot-single"} type="entypo" color={"green"} size={40} />
+            <View style={styles.routeDetails}>
+              <Text style={styles.routeName}>{shortPickupAddress.primary}</Text>
+              <Text style={styles.routeSub}>
+                {shortPickupAddress.secondary}
+              </Text>
             </View>
-          ))}
+          </View>
+
+          <View style={styles.routeItem}>
+            <Icon
+              name={"dot-single"}
+              type="entypo"
+              color={colors.primary}
+              size={40}
+            />
+            <View style={styles.routeDetails}>
+              <Text style={styles.routeName}>{shortDropAddress.primary}</Text>
+              <Text style={styles.routeSub}>{shortDropAddress.secondary}</Text>
+            </View>
+          </View>
         </View>
 
         <View style={styles.footer}>
@@ -128,7 +134,7 @@ export default function OnFinishRideModal({
             }}
           >
             <Text style={styles.totalAmount}>Total Amount:</Text>
-            <Text style={styles.totalAmount}>{totalAmount}</Text>
+            <Text style={styles.totalAmount}>₹ {fare}</Text>
           </View>
           <View style={styles.paymentContainer}>
             <View style={{ flex: 1 }}>
@@ -289,3 +295,6 @@ const pickerSelectStyles = StyleSheet.create({
     // backgroundColor : colors.primary,
   },
 });
+
+
+

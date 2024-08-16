@@ -10,9 +10,9 @@ import {
 import BottomSheet from "@gorhom/bottom-sheet";
 import { AirbnbRating } from "@rneui/base";
 import CustomBottomModal from "./CustomBottomModal";
-import { colors } from "../../../constants/colors";
-import OrangeButton from "../../ui/OrangeButton";
-import { RideContext } from "../../store/RideContext";
+import { colors } from "../../../../constants/colors";
+import OrangeButton from "../../../ui/OrangeButton";
+import { RideContext } from "../../../store/RideContext";
 
 export default function TripReviewModal({ onChange, isFocused }: any) {
   const { driver, resetRideData } = useContext(RideContext);
@@ -27,13 +27,13 @@ export default function TripReviewModal({ onChange, isFocused }: any) {
       <View style={styles.container}>
         <View style={styles.driverInfo}>
           <Image
-            source={require("../../../assets/sidhu.jpg")} // Replace with your driver image URL
+            source={{uri : driver?.profile_picture}} // Replace with your driver image URL
             style={styles.driverImage}
           />
-          <Text style={styles.driverName}>{driver.name}</Text>
+          <Text style={styles.driverName}>{driver?.name}</Text>
           <AirbnbRating
             count={5}
-            defaultRating={5}
+            defaultRating={driver?.rating}
             size={20}
             showRating={false}
             isDisabled={true}
