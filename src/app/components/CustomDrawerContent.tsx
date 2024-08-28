@@ -7,12 +7,14 @@ import LogoutModal from './OnScreenModals/LogoutModal';
 import { LocalAuthContext } from '../../store/LocalAuthContext';
 import { logout } from '../../../util/localAPIs';
 import { useNavigation } from '@react-navigation/native';
+import { ProfileContext } from '../../store/ProfileContext';
 
 export default function CustomDrawerContent(props : DrawerContentComponentProps) {
 
   const [isAlertVisible, setAlertVisible] = useState(false);
   const navigation = useNavigation<any>()
   const { setToken } = useContext(LocalAuthContext);
+  const {firstName, lastName, picture,  } = useContext(ProfileContext)
 
   function toggleAlert() {
     setAlertVisible(!isAlertVisible);
@@ -39,12 +41,12 @@ export default function CustomDrawerContent(props : DrawerContentComponentProps)
         <Avatar
           size="large"
           rounded
-          source={{ uri: 'https://randomuser.me/api/portraits/men/41.jpg' }} // Replace with your image
+          source={{ uri: picture ? picture : 'https://randomuser.me/api/portraits/men/41.jpg' }} // Replace with your image
           containerStyle={styles.avatar}
         />
         </View>
         <View>
-        <Text h4 style={styles.name}>Gorge Jacob</Text>
+        <Text h4 style={styles.name}>{firstName} {lastName}</Text>
         <View style={styles.rating}>
           {Array(5).fill(0).map((_, i) => (
             <Icon key={i} name="star" type="font-awesome" color="#FFD700" size={17} style={{marginRight : 5, marginTop : 5}}/>

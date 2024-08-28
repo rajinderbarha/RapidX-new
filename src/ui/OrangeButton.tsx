@@ -5,7 +5,6 @@ import { colors } from "../../constants/colors";
 const { width, height } = Dimensions.get('window');
 interface ButtonProps {
   style?: ViewStyle;
-  iconName: any;
   text: string;
   onPress: () => void;
 }

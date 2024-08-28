@@ -125,13 +125,12 @@ const OnBookedRideModal: React.FC<BottomModalProps> = ({
                 navigation.navigate("Ride Cancel");
               }}
               style={{}}
-              iconName={""}
             />
             <View style={{ marginTop: 8, width: "100%" }}>
               <OrangeButton
                 text="Completed"
                 onPress={completedRideHandler}
-                iconName={""}
+               
                 style={{ backgroundColor: "green" }}
               />
             </View>

@@ -9,6 +9,7 @@ import { RideContext } from "../../../store/RideContext";
 import LoadingBar from "../../../ui/LoadingBar";
 import { driverData } from "../../../../util/driverData";
 import { getDriverDetails } from "../../../../util/localAPIs";
+// import { useSocket } from "../../../../App";
 
 interface BottomModalProps {
   onChange: (index: number) => void;
@@ -19,10 +20,12 @@ export default function ConfirmLocationModal({
   isFocused,
   onChange,
 }: BottomModalProps) {
-  const { distance, fare } = useContext(LocationContext);
+  const { distance, fare,dropAddress,dropLocation,pickedLocation,pickupAddress } = useContext(LocationContext);
   const { rideIsBooked, setRideIsBooked, driver, setDriver } =
     useContext(RideContext);
+ 
 
+    // const {requestRide, driverDetails} = useSocket()
   const snapPoints = useMemo(() => ["25%"], []);
 
   const navigation = useNavigation<any>();
@@ -30,6 +33,29 @@ export default function ConfirmLocationModal({
   function bookRideHandler() {
     setRideIsBooked(true);
   }
+  
+  const userData = {
+    distance: 15,
+    duration: 20,
+    dropAddress: dropAddress || "Unknown Drop Address",
+    pickupAddress: pickupAddress || "Unknown Pickup Address",
+    user_id: "66bc9d0e8f067abcb83e106d",
+    user_origin: {
+      latitude: pickedLocation?.latitude || 0, // Fallback to 0 if undefined
+      longitude: pickedLocation?.longitude || 0, // Fallback to 0 if undefined
+    },
+    user_destination: {
+      latitude: dropLocation?.latitude || 0, // Fallback to 0 if undefined
+      longitude: dropLocation?.longitude || 0, // Fallback to 0 if undefined
+    }
+  };
+
+
+  function rideBookHandler() {
+    // requestRide(userData)
+    console.log('userData : ', userData)
+  }
+
 
   // function getDriver(arr : any){
   //   if (arr.length === 0) {
@@ -83,9 +109,8 @@ export default function ConfirmLocationModal({
           <View style={styles.buttonContainer}>
             <OrangeButton
               text="Book Ride"
-              onPress={bookRideHandler}
+              onPress={()=>rideBookHandler()}
               style={{}}
-              iconName={""}
             />
           </View>
         </View>

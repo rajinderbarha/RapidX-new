@@ -25,25 +25,43 @@ import { RideContext } from "../../store/RideContext";
 import { driverData } from "../../../util/driverData";
 import OnFinishRideModal from "../components/BottomModals/OnFinishRideModal";
 import TripReviewModal from "../components/BottomModals/TripReviewModal";
-
-
+import { ProfileContext } from "../../store/ProfileContext";
 
 const { height } = Dimensions.get("screen");
 
 export default function MainScreen() {
   const navigation = useNavigation() as any;
   const { location, reset } = useContext(LocationContext);
-  const { rideIsBooked, rideIsCompleted, paymentIsDone,setRideIsCompleted, driver } = useContext(RideContext);
+  const { isProfileCompleted } = useContext(ProfileContext);
+  const {
+    rideIsBooked,
+    rideIsCompleted,
+    paymentIsDone,
+    setRideIsCompleted,
+    driver,
+  } = useContext(RideContext);
   const mapRef = useRef<MapView>(null);
   const [buttonBottomPosition, setButtonBottomPosition] = useState(20);
   const isFocused = useIsFocused();
+
+  // useEffect(() => {
+  //   if (!isProfileCompleted) {
+  //     navigation.replace("Profile");
+  //     console.log('meow meow')
+  //   }
+  // }, [useIsFocused, isProfileCompleted]);
+
+
+  if(!isProfileCompleted){
+    navigation.replace("Profile");
+  }
 
   const handleModalChange = useCallback((index: any) => {
     const modalHeight = index === 0 ? 0.3 : 0.6; // Update according to your snap points
     setButtonBottomPosition(modalHeight * height + 20); // Adjust button position based on modal height
   }, []);
 
- 
+  
 
   function myLocationButtonHandler() {
     if (location && mapRef.current) {
@@ -57,32 +75,39 @@ export default function MainScreen() {
     }
   }
 
-  
-    return (
-      <BottomSheetModalProvider>
-        <View style={styles.container}>
-          <View style={styles.headerContainer}>
-            <MainHeader />
-          </View>
-          <View style={styles.mapContainer}>
-            <Map
-              markerType={"pickUp"}
-              location={location?.coords || null}
-              reff={mapRef}
-            />
-          </View>
-          <MyLocationButton
-            onPress={myLocationButtonHandler}
-            style={{ bottom: buttonBottomPosition }}
+  return (
+    <BottomSheetModalProvider>
+      <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <MainHeader />
+        </View>
+        <View style={styles.mapContainer}>
+          <Map
+            markerType={"pickUp"}
+            location={location?.coords || null}
+            reff={mapRef}
           />
         </View>
-       {!rideIsBooked && !rideIsCompleted && <MainScreenModal onChange={handleModalChange} isFocused={isFocused} />}
-       {rideIsBooked  && driver &&<OnBookedRideModal onChange={handleModalChange} isFocused={isFocused} />}
-       {rideIsCompleted  && <OnFinishRideModal onChange={handleModalChange} isFocused={isFocused} />}
-       {paymentIsDone  && <TripReviewModal onChange={handleModalChange} isFocused={isFocused} />}
-      </BottomSheetModalProvider>
-    );
-  } 
+        <MyLocationButton
+          onPress={myLocationButtonHandler}
+          style={{ bottom: buttonBottomPosition }}
+        />
+      </View>
+      {!rideIsBooked && !rideIsCompleted && (
+        <MainScreenModal onChange={handleModalChange} isFocused={isFocused} />
+      )}
+      {rideIsBooked && driver && (
+        <OnBookedRideModal onChange={handleModalChange} isFocused={isFocused} />
+      )}
+      {rideIsCompleted && (
+        <OnFinishRideModal onChange={handleModalChange} isFocused={isFocused} />
+      )}
+      {paymentIsDone && (
+        <TripReviewModal onChange={handleModalChange} isFocused={isFocused} />
+      )}
+    </BottomSheetModalProvider>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {

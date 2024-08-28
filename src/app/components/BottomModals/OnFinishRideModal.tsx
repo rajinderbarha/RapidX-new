@@ -154,7 +154,7 @@ export default function OnFinishRideModal({
                 text={"Pay now"}
                 onPress={payNowHandler}
                 style={{ backgroundColor: "#33a823" }}
-                iconName={""}
+            
               />
             </View>
           </View>

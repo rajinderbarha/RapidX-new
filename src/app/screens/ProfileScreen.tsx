@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   Text,
   TextInput,
   StyleSheet,
   TouchableOpacity,
+  Alert,
+  Dimensions,
+  ScrollView,
 } from "react-native";
 import { Avatar, Button } from "@rneui/base";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -12,6 +15,8 @@ import OrangeButton from "../../ui/OrangeButton";
 import { colors } from "../../../constants/colors";
 import { launchImageLibrary } from "react-native-image-picker";
 import { useNavigation } from "@react-navigation/native";
+import { ProfileContext } from "../../store/ProfileContext";
+import { UpdateUser } from "../../../util/localAPIs";
 
 const profile = {
   picture: require("../../../assets/sidhu.jpg"),
@@ -21,14 +26,25 @@ const profile = {
   phone: "+1-9654-963-258",
 };
 
-export default function ProfileScreen() {
-  const [firstName, setFirstName] = useState(profile.firstName);
-  const [lastName, setLastName] = useState(profile.lastName);
-  const [email, setEmail] = useState(profile.email);
-  const [phone, setPhone] = useState(profile.phone);
-  const [picture, setPicture] = useState(profile.picture);
+const {height, width} = Dimensions.get('screen')
 
-  const navigation = useNavigation();
+export default function ProfileScreen() {
+  
+
+  const navigation = useNavigation<any>();
+
+  const {
+    setIsProfileCompleted,
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    email,
+    setEmail,
+    phoneNumber,
+    setPicture,
+    picture
+  } = useContext(ProfileContext);
 
   const onUpdate = (updatedProfile: any) => {
     console.log("Updated Profile:", updatedProfile);
@@ -55,25 +71,30 @@ export default function ProfileScreen() {
     });
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     const updatedProfile = {
-      picture,
+      phoneNumber,
       firstName,
       lastName,
       email,
-      phone,
     };
-    onUpdate(updatedProfile);
-    navigation.goBack();
+    if (firstName && lastName && phoneNumber) {
+      await UpdateUser(updatedProfile);
+      setIsProfileCompleted(true);
+      navigation.navigate("Main");
+    }else{
+      Alert.alert('Complete your profile first')
+    }
   };
 
   return (
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
     <View style={styles.container}>
       <View style={styles.header}>
         <Avatar
           rounded
           size="xlarge"
-          source={profile.picture}
+          source={{uri : picture?? 'https://randomuser.me/api/portraits/men/41.jpg'}}
           containerStyle={styles.avatar}
         >
           <Avatar.Accessory
@@ -118,9 +139,10 @@ export default function ProfileScreen() {
           <View style={styles.phoneContainer}>
             <TextInput
               style={styles.input}
-              value={phone}
-              onChangeText={setPhone}
+              value={phoneNumber}
+              // onChangeText={setPhone}
               keyboardType="phone-pad"
+              editable={false}
             />
             <Text style={styles.verifiedText}>Verified</Text>
           </View>
@@ -134,6 +156,7 @@ export default function ProfileScreen() {
         />
       </View>
     </View>
+    </ScrollView>
   );
 }
 
@@ -142,6 +165,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#fff",
+    
   },
   header: {
     alignItems: "center",

@@ -2,7 +2,7 @@ import { useContext, useRef } from "react";
 import { Dimensions } from "react-native";
 import MapViewDirections from "react-native-maps-directions";
 import { LocationContext } from "../../../store/LocationContext";
-import MapData from "../../../../util/mapApis";
+import MapData, { fetchFare } from "../../../../util/mapApis";
 
 const GOOGLE_API_kEY = "AIzaSyCV2NRNl0uVeY37ID1gIoYgJexr9SBDn2Q";
 const { width, height } = Dimensions.get("window");
@@ -63,14 +63,14 @@ export default function AddMapViewDirections({
         console.log(`Duration: ${result.duration} min.`);
         async function sendData() {
           console.log('fetching fare')
-          const fare = await MapData(
-            user_id,
-            origin,
-            destination,
+          const fare = await fetchFare(
+            // user_id,
+            // origin,
+            // destination,
             result.distance,
             result.duration,
-            result.legs[0].start_address,
-            result.legs[0].end_address
+            // result.legs[0].start_address,
+            // result.legs[0].end_address
            
           );
           setFare(fare)

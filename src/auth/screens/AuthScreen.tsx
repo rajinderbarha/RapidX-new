@@ -17,19 +17,28 @@ import {} from "../../../util/location";
 import AuthenticatePhoneNumber from "../../../util/localAPIs";
 import { LocalAuthContext } from "../../store/LocalAuthContext";
 import { ProfileContext } from "../../store/ProfileContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import storeUserProfileData from "../../../util/userData";
 
 export default function AuthScreen() {
   const [countryCode, setCountryCode] = useState<string>("+91");
   const [phoneNumberInput, setPhoneNumberInput] = useState<string>("");
-  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [phNumber, setPhNumber] = useState<string>("");
   const [otp, setOtp] = useState("");
 
   // const {confirm,confirmOtp,signInWithPhoneNumber,signOut,user} =useContext(AuthContext)
   const { setToken, token } = useContext(LocalAuthContext);
-  const { setPhNumber, setName } = useContext(ProfileContext);
+  const {
+    setPhoneNumber,
+    setFirstName,
+    setLastName,
+    setIsNewUser,
+    setEmail,
+    setIsProfileCompleted,
+  } = useContext(ProfileContext);
 
   useEffect(() => {
-    setPhoneNumber(`${countryCode}${phoneNumberInput}`);
+    setPhNumber(`${countryCode}${phoneNumberInput}`);
   }, [countryCode, phoneNumberInput]);
 
   function validatePhoneNumber(countryCode: string, phoneNumber: string) {
@@ -58,11 +67,23 @@ export default function AuthScreen() {
   async function handelSignIn() {
     if (validatePhoneNumber(countryCode, phoneNumberInput)) {
       try {
-        const userData = await AuthenticatePhoneNumber(phoneNumber);
-        const receivedToken = userData.token;
+        const responseData = await AuthenticatePhoneNumber(
+          phNumber,
+          setIsNewUser,
+          setIsProfileCompleted
+        );
+        await storeUserProfileData({
+          firstName: responseData.user.firstName,
+          lastName: responseData.user.lastName,
+          email: responseData.user.email,
+          phoneNumber: phNumber,
+        });
+        const receivedToken = responseData.token;
         setToken(receivedToken);
-        setPhNumber(phoneNumber);
-        setName(userData.name)
+        // setPhoneNumber(phNumber);
+        // setFirstName(responseData.user.firstName);
+        // setLastName(responseData.user.lastName);
+        // setEmail(responseData.user.email);
         Alert.alert("Logging You In");
       } catch (error) {
         console.error("Error signing in", error);
@@ -133,7 +154,7 @@ export default function AuthScreen() {
           )} */}
         </View>
       </ScrollView>
-      <OrangeButton iconName={''} text={"Send"} onPress={handelSignIn} />
+      <OrangeButton iconName={""} text={"Send"} onPress={handelSignIn} />
 
       {/* {!confirm && !user &&(
         <OrangeButton text={"Send"} onPress={handelSignIn} />
