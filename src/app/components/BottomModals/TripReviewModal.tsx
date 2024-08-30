@@ -70,7 +70,6 @@ export default function TripReviewModal({ onChange, isFocused }: any) {
 
         <OrangeButton
           text="Send"
-          iconName={""}
           onPress={() => resetRideData()}
         />
       </View>

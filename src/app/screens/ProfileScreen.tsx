@@ -151,7 +151,6 @@ export default function ProfileScreen() {
       <View style={{ marginTop: "40%" }}>
         <OrangeButton
           text="Save Changes"
-          iconName={""}
           onPress={handleUpdate}
         />
       </View>
