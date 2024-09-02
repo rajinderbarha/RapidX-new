@@ -32,6 +32,7 @@ import PaymentScreen from "./src/app/screens/PaymentScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { io, Socket } from "socket.io-client";
+import RideDetailScreen from "./src/app/screens/DrawerScreens/RideDetailScreen";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -147,6 +148,7 @@ function AuthenticatedStack() {
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="Ride Cancel" component={RideCancelScreen} />
       <Stack.Screen name="Payment" component={PaymentScreen} />
+      <Stack.Screen name="Ride Details" component={RideDetailScreen} />
     </Stack.Navigator>
   );
 }

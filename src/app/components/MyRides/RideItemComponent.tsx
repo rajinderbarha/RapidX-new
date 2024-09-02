@@ -10,14 +10,17 @@ import {
 interface RideItemProps {
   pickupAddress: string;
   dropAddress: string;
+  pickupDateTime: string;
+  dropDateTime: string;
+  total: string | number;
 }
-
-const date = "Mon 29, July";
-const time = "3:55PM";
 
 export default function RideItemComponent({
   pickupAddress,
   dropAddress,
+  pickupDateTime,
+  dropDateTime,
+  total,
 }: RideItemProps) {
   const truncateAddress = (address: string, maxLength = 48) => {
     return address.length > maxLength
@@ -46,22 +49,18 @@ export default function RideItemComponent({
           <View style={[styles.locations]}>
             <Text style={styles.label}>{truncatedPickupAddress}</Text>
             <Text>{truncatedPickupAddress}</Text>
-            <Text style={styles.label}>
-              {date} {time}
-            </Text>
+            <Text style={styles.label}>{pickupDateTime}</Text>
           </View>
           <View style={[styles.locations]}>
             <Text style={styles.label}>{truncatedDropAddress}</Text>
             <Text>{truncatedDropAddress}</Text>
-            <Text style={styles.label}>
-              {date} {time}
-            </Text>
+            <Text style={styles.label}>{dropDateTime}</Text>
           </View>
         </View>
       </View>
       <View style={styles.detailsContainer}>
-        <Text style={styles.price}>$50</Text>
-        <Text  style={[styles.status, {color : '#50D83D'}]}>Status</Text>
+        <Text style={styles.price}>${total}</Text>
+        <Text style={[styles.status, { color: "#50D83D" }]}>Status</Text>
       </View>
     </View>
   );
@@ -79,11 +78,24 @@ const styles = StyleSheet.create({
     // overflow: "hidden",
     // elevation: 7,
     marginTop: 2,
-    position: "absolute",
+    // position: "absolute",
     top: 0,
     width: "95%",
     zIndex: 100,
   },
+
+  rootContainerr: {
+    borderWidth: 0.5,
+    borderColor: "#ccccccf6",
+    backgroundColor: "#ffffff",
+    alignSelf: "center",
+    marginTop: 10,
+    width: "95%",
+    // zIndex: 1, // reduced zIndex to a normal range
+    // position: "relative", // changed to relative to avoid stacking issues
+  },
+  // other styles remain the same
+
   imageContainer: {
     flex: 1,
     alignItems: "center",
@@ -134,14 +146,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 50,
-    paddingVertical: 10,
+    paddingVertical: 5,
   },
   price: {
     fontSize: 17,
     fontWeight: "bold",
   },
   status: {
-   
-    fontWeight : '500'
+    fontWeight: "500",
   },
 });

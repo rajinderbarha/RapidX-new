@@ -25,8 +25,9 @@ export default async function AuthenticatePhoneNumber(
       const responseData = response.data;
       const userData = response.data.user;
       const receivedToken = response.data.token;
+      const userId = userData._id;
       const isNewUser = userData?.is_new_user;
-      console.log("isnewuser: ", isNewUser);
+      console.log("isnewuser: ", responseData);
       if (isNewUser) {
         setIsNewUser(true);
         setIsProfileCompleted(false);
@@ -35,14 +36,16 @@ export default async function AuthenticatePhoneNumber(
         setIsProfileCompleted(true);
       }
 
-      if (receivedToken) {
+      if (receivedToken && userId) {
         await AsyncStorage.setItem("token", receivedToken).then(() =>
           console.log("token added")
         );
-
+        await AsyncStorage.setItem("userId", userId).then(() =>
+          console.log("Id added")
+        );
         return responseData;
       } else {
-        console.log("Token not found in the response.");
+        console.log("Token or Id not found in the response.");
       }
     }
   } catch (error) {
@@ -61,11 +64,23 @@ export async function fetchToken() {
     console.log("error fetching token : ", error);
   }
 }
+export async function fetchUserId() {
+  try {
+    const userId = await AsyncStorage.getItem("userId");
+    if (userId) {
+      console.log("got Id");
+      return userId;
+    }
+  } catch (error) {
+    console.log("error fetching userId : ", error);
+  }
+}
 
 export async function logout() {
   try {
     await AsyncStorage.removeItem("token");
     await AsyncStorage.removeItem("profileData");
+    await AsyncStorage.removeItem("userId");
   } catch (error) {
     console.error("Error logging out:", error);
   }
@@ -116,7 +131,7 @@ export async function UpdateUser({
     console.log("Updated Profile");
   } catch (error: any) {
     // Log detailed error information
-    console.error("Error in mapData: ", error.message);
+    console.error("Error in updating User: ", error.message);
     console.error("Stack trace: ", error.stack);
   }
 }
@@ -125,7 +140,7 @@ export async function getDriverDetails() {
   const URL =
     "https://rw6v05jh-8000.inc1.devtunnels.ms/api/users/ride-accept-driver";
 
-  const ride_id = "66b9b5b36a231a558018d851";
+  const ride_id = await fetchUserId();
   const driver_id = "66b9f461091131eca3542607";
 
   const location = {

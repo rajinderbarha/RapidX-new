@@ -28,6 +28,7 @@ export default function MainHeader() {
   }, [pickedLocation]);
 
   function favouriteHandler() {
+    navigation.navigate("Ride Details")
     // Handle favourite action here
   }
 

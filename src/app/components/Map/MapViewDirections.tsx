@@ -7,7 +7,7 @@ import MapData, { fetchFare } from "../../../../util/mapApis";
 const GOOGLE_API_kEY = "AIzaSyCV2NRNl0uVeY37ID1gIoYgJexr9SBDn2Q";
 const { width, height } = Dimensions.get("window");
 
-const user_id = '66b1c305d27b9a0a022c6005'
+// const user_id = '66b1c305d27b9a0a022c6005'
 
 interface DirectionProps {
   origin: {

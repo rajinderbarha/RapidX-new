@@ -1,5 +1,7 @@
 // import axios from "axios";
 
+import { fetchUserId } from "./localAPIs";
+
 // export default async function MapData(
 //   user_id: string,
 //   origin: {
@@ -50,7 +52,6 @@
 // }
 
 export default async function MapData(
-  user_id: string,
   origin: {
     latitude: number;
     longitude: number;
@@ -66,6 +67,7 @@ export default async function MapData(
 ) {
   const URL =
     "https://rw6v05jh-8000.inc1.devtunnels.ms/api/users/ride-book-user";
+  const user_id = await fetchUserId();
 
   try {
     const response = await fetch(URL, {
