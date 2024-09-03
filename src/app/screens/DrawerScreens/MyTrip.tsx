@@ -1,6 +1,7 @@
 import React from "react";
-import { FlatList, ScrollView, Text, View } from "react-native";
+import { FlatList, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import RideItemComponent from "../../components/MyRides/RideItemComponent";
+import { useNavigation } from "@react-navigation/native";
 
 const rideDetailsArray = [
   {
@@ -109,6 +110,7 @@ const rideDetailsArray = [
 // }
 
 export default function MyTripScreen() {
+  const navigation = useNavigation<any>()
   return (
     <View style={{ flex: 1, backgroundColor: '#f0f0f0' }}> 
       <FlatList
@@ -116,8 +118,8 @@ export default function MyTripScreen() {
         renderItem={({ item }) => {
           console.log('Rendering item:', item);
           return (
-            <View style={{flex : 1, marginVertical : 10}}>
-              {/* <Text>xx</Text> */}
+            <View style={{flex : 1, marginVertical : 10 }}>
+          <TouchableOpacity onPress={()=>navigation.navigate('Ride Details', item)}>
             <RideItemComponent
             dropAddress={item.rideInfo.dropLocation.location}
             pickupAddress={item.rideInfo.pickupLocation.location}
@@ -125,6 +127,7 @@ export default function MyTripScreen() {
             pickupDateTime={item.rideInfo.pickupLocation.dateTime}
             total={item.billDetail.totalAmount}
           />
+          </TouchableOpacity>
           </View>
           );
         }}

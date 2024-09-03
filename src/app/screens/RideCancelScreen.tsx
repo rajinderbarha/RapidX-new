@@ -71,7 +71,7 @@ export default function RideCancelScreen() {
       </View>
       </View>
       <View style={{flex : 1}}>
-        <OrangeButton text="Done" onPress={handleCancelRide} iconName={''} style={{width : '100%'}}/>
+        <OrangeButton text="Done" onPress={handleCancelRide}  style={{width : '100%'}}/>
       </View>
     </View>
   );

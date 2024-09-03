@@ -2,7 +2,6 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { io } from "socket.io-client";
 import { useContext } from "react";
-import { ProfileContext } from "../src/store/ProfileContext";
 
 interface updatingUserProps {
   phoneNumber: string;
@@ -30,10 +29,10 @@ export default async function AuthenticatePhoneNumber(
       console.log("isnewuser: ", responseData);
       if (isNewUser) {
         setIsNewUser(true);
-        setIsProfileCompleted(false);
+        setIsProfileCompleted("no");
       } else {
         // console.log('isnewuser: ',isNewUser)
-        setIsProfileCompleted(true);
+        setIsProfileCompleted("yes");
       }
 
       if (receivedToken && userId) {
@@ -183,3 +182,18 @@ export async function getDriverDetails() {
     throw error;
   }
 }
+
+export async function fetchProfileData() {
+  try {
+    const profileData = await AsyncStorage.getItem("profileData");
+    if (profileData) {
+      const parsedProfileData = JSON.parse(profileData);
+      const { email, firstName, lastName, phoneNumber } = parsedProfileData;
+      return { email, firstName, lastName, phoneNumber };
+    }
+  } catch (error) {
+    console.error("Error fetching profile data:", error);
+  }
+  return {}; // return an empty object in case of an error or missing data
+}
+

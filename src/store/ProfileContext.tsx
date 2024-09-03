@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, useEffect, useState } from "react";
+import { createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
 
 interface ProfileContext {
   firstName: string;
@@ -9,12 +9,13 @@ interface ProfileContext {
   setEmail: (name: string) => void;
   phoneNumber: string;
   setPhoneNumber: (number: string) => void;
-  isNewUser: boolean ;
+  isNewUser: boolean;
   setIsNewUser: (value: boolean) => void;
-  isProfileCompleted: boolean ;
-  setIsProfileCompleted: (value: any) => void;
-  picture : string,
-  setPicture : (uri : string)=>void
+  isProfileCompleted: string;
+  setIsProfileCompleted: (value: string) => void;
+  picture: string;
+  setPicture: (uri: string) => void;
+  resetProfile: () => void;
 }
 
 export const ProfileContext = createContext<ProfileContext>({
@@ -28,10 +29,11 @@ export const ProfileContext = createContext<ProfileContext>({
   setPhoneNumber: () => {},
   isNewUser: false,
   setIsNewUser: () => {},
-  isProfileCompleted: false,
+  isProfileCompleted: "",
   setIsProfileCompleted: () => {},
-  setPicture :()=>{},
-  picture : ''
+  setPicture: () => {},
+  picture: "",
+  resetProfile: () => {},
 });
 
 export default function ProfileContextProvider({
@@ -42,8 +44,18 @@ export default function ProfileContextProvider({
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isNewUser, setIsNewUser] = useState(false);
-  const [isProfileCompleted, setIsProfileCompleted] = useState(true);
-  const [picture, setPicture] = useState('');
+  const [isProfileCompleted, setIsProfileCompleted] = useState("");
+  const [picture, setPicture] = useState("");
+
+  function resetProfile() {
+    setEmail("");
+    setFirstName(""),
+      setLastName(""),
+      setPhoneNumber(""),
+      setIsNewUser(false),
+      setIsProfileCompleted("");
+    setPicture("");
+  }
 
   const value = {
     firstName,
@@ -59,10 +71,12 @@ export default function ProfileContextProvider({
     email,
     setEmail,
     picture,
-    setPicture
+    setPicture,
+    resetProfile,
   };
 
   return (
     <ProfileContext.Provider value={value}>{children}</ProfileContext.Provider>
   );
 }
+

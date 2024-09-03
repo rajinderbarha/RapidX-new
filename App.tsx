@@ -22,9 +22,11 @@ import CustomBackButton from "./src/ui/CustomBackButton";
 import LocalAuthProvider, {
   LocalAuthContext,
 } from "./src/store/LocalAuthContext";
-import { fetchToken } from "./util/localAPIs";
+import { fetchProfileData, fetchToken } from "./util/localAPIs";
 import ProfileScreen from "./src/app/screens/ProfileScreen";
-import ProfileContextProvider, { ProfileContext } from "./src/store/ProfileContext";
+import ProfileContextProvider, {
+  ProfileContext,
+} from "./src/store/ProfileContext";
 import RideContextProvider from "./src/store/RideContext";
 import RideCancelScreen from "./src/app/screens/RideCancelScreen";
 import MyTripScreen from "./src/app/screens/DrawerScreens/MyTrip";
@@ -79,17 +81,13 @@ const Drawer = createDrawerNavigator();
 //     };
 //   }, ); // Empty dependency array ensures this runs only once
 
-
 //   const requestRide = (userData : userData) => {
 //     console.log("Emitting requestRide:", userData);
 //     socket.emit("requestRide", userData);
 //   };
 
-
 //   return { requestRide, driverDetails };
 // };
-
-
 
 function AuthStack() {
   return (
@@ -119,17 +117,19 @@ function AuthStack() {
   );
 }
 
-
-// function ProfileScreen(){
-//   return
-// }
+function ProfileStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="profile" component={ProfileScreen} />
+    </Stack.Navigator>
+  );
+}
 
 function AuthenticatedStack() {
   return (
     <Stack.Navigator
       initialRouteName="Main"
-      screenOptions={{ cardStyle: { backgroundColor: "#ffffff" } ,  }}
-
+      screenOptions={{ cardStyle: { backgroundColor: "#ffffff" } }}
     >
       <Stack.Screen
         name="Main"
@@ -153,14 +153,14 @@ function AuthenticatedStack() {
   );
 }
 
-
 function DrawerNavigator() {
-  const { setEmail, setFirstName, setLastName, setPhoneNumber } = useContext(ProfileContext);
+  const { setEmail, setFirstName, setLastName, setPhoneNumber } =
+    useContext(ProfileContext);
 
   useEffect(() => {
     async function fetchProfileData() {
       try {
-        const profileData = await AsyncStorage.getItem('profileData');
+        const profileData = await AsyncStorage.getItem("profileData");
         if (profileData) {
           const parsedProfileData = JSON.parse(profileData);
           setEmail(parsedProfileData.email);
@@ -176,7 +176,6 @@ function DrawerNavigator() {
     fetchProfileData();
     // dependencies - setEmail, setFirstName, setLastName, setPhoneNumber
   }, []);
-
 
   return (
     <Drawer.Navigator
@@ -202,43 +201,85 @@ function DrawerNavigator() {
 function Navigation() {
   // const { user } = useContext(AuthContext);
   const { token, setToken } = useContext(LocalAuthContext);
+   
+  const { setEmail, setFirstName, setLastName, setPhoneNumber,isProfileCompleted, phoneNumber, firstName, lastName, setIsProfileCompleted} =
+    useContext(ProfileContext);
+
+    useEffect(() => {
+      async function fetchingToken() {
+        const storedToken = await fetchToken();
+        if (storedToken) {
+          setToken(storedToken);
+        }
+      }
+      fetchingToken();
+    }, [token]);
+
+
+
+
 
   useEffect(() => {
-    async function fetchingToken() {
-      const storedToken = await fetchToken();
-      if (storedToken) {
-        setToken(storedToken);
+    if(firstName && lastName){
+      setIsProfileCompleted("yes")
+    }
+  }, []);
+
+
+
+  useEffect(() => {
+    async function fetchData() {
+      if (token && !isProfileCompleted) {
+        const { email, firstName, lastName, phoneNumber } = await fetchProfileData();
+        if (firstName && lastName) {
+          setFirstName(firstName);
+          setLastName(lastName);
+          setEmail(email);
+          setPhoneNumber(phoneNumber);
+          setIsProfileCompleted("yes");
+        } else {
+          setIsProfileCompleted("no");
+        }
       }
     }
-    fetchingToken();
+    fetchData();
   }, [token]);
 
+  if (token && !isProfileCompleted) {
+    // You can return a loading component here or null until the profile status is known
+    return null;
+  }
   return (
-    <NavigationContainer >
+    <NavigationContainer>
       <StatusBar style="auto" />
-      {!token ? <AuthStack /> : <AuthenticatedStack />}
+      {!token ? (
+        <AuthStack />
+      ) : isProfileCompleted === "yes" ? (
+        <AuthenticatedStack />
+      ) : (
+        <ProfileStack />
+      )}
     </NavigationContainer>
   );
 }
 
 export default function App() {
   return (
-      <SafeAreaView style={{ flex: 1 }}>
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <LocalAuthProvider>
-        <AuthContextProvider>
-          <LocationContextProvider>
-            <ProfileContextProvider>
-              <RideContextProvider>
-                <Navigation />
-              </RideContextProvider>
-            </ProfileContextProvider>
-          </LocationContextProvider>
-        </AuthContextProvider>
-      </LocalAuthProvider>
-      
-    </GestureHandlerRootView>
-        </SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <LocalAuthProvider>
+          <AuthContextProvider>
+            <LocationContextProvider>
+              <ProfileContextProvider>
+                <RideContextProvider>
+                  <Navigation />
+                </RideContextProvider>
+              </ProfileContextProvider>
+            </LocationContextProvider>
+          </AuthContextProvider>
+        </LocalAuthProvider>
+      </GestureHandlerRootView>
+    </SafeAreaView>
   );
 }
 

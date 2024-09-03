@@ -29,7 +29,6 @@ export default function LogoutModal({ isVisible, onClose, onConfirm }: any) {
             text={"LOGOUT"}
             onPress={onConfirm}
             style={{ height: 35, padding: 0, width : 150, margin : 0 }}
-            iconName={""}
           />
           </View>
         </View>

@@ -8,13 +8,14 @@ import { LocalAuthContext } from '../../store/LocalAuthContext';
 import { logout } from '../../../util/localAPIs';
 import { useNavigation } from '@react-navigation/native';
 import { ProfileContext } from '../../store/ProfileContext';
+import ProfileInitial from './ProfileInitial';
 
 export default function CustomDrawerContent(props : DrawerContentComponentProps) {
 
   const [isAlertVisible, setAlertVisible] = useState(false);
   const navigation = useNavigation<any>()
   const { setToken } = useContext(LocalAuthContext);
-  const {firstName, lastName, picture,  } = useContext(ProfileContext)
+  const {firstName, lastName, picture, resetProfile } = useContext(ProfileContext)
 
   function toggleAlert() {
     setAlertVisible(!isAlertVisible);
@@ -25,6 +26,7 @@ export default function CustomDrawerContent(props : DrawerContentComponentProps)
       // await signOut();
       await logout();
       setToken("");
+      resetProfile();
 
       Alert.alert("Signed out successfully");
     } catch (error) {
@@ -38,12 +40,20 @@ export default function CustomDrawerContent(props : DrawerContentComponentProps)
       <Pressable onPress={()=>{navigation.navigate('Profile')}}>
       <View style={styles.header}>
         <View>
-        <Avatar
-          size="large"
-          rounded
-          source={{ uri: picture ? picture : 'https://randomuser.me/api/portraits/men/41.jpg' }} // Replace with your image
-          containerStyle={styles.avatar}
-        />
+        {picture ? (
+            <Avatar
+              rounded
+              size="large"
+              source={{ uri: picture }}
+              containerStyle={styles.avatar}
+            />
+           
+          ) : (
+            <View style={styles.avatarAlt}>
+              <ProfileInitial name={firstName ? firstName : '?'} />
+             
+            </View>
+          )}
         </View>
         <View>
         <Text h4 style={styles.name}>{firstName} {lastName}</Text>
@@ -128,6 +138,17 @@ const styles = StyleSheet.create({
       },
   icons : {
     marginLeft : 10
-  }
+  },
+  avatarAlt: {
+    borderWidth: 2,
+    borderColor: colors.primary,
+    height: 75,
+    width: 75,
+    borderRadius: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight : 10,
+    
+  },
 });
 

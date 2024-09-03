@@ -1,8 +1,20 @@
-import { View, Text, ScrollView, StyleSheet, Image } from 'react-native';
-import { Avatar, Button, Icon } from '@rneui/base';
-import OrangeButton from '../../../ui/OrangeButton';
+import { View, Text, ScrollView, StyleSheet, Image } from "react-native";
+import { Avatar, Button, Icon } from "@rneui/base";
+import OrangeButton from "../../../ui/OrangeButton";
+import { useRoute } from "@react-navigation/native";
+import getShortAddress, {
+  separateAddress,
+} from "../../../../util/getShortAddress";
 
 const RideDetailScreen = () => {
+  const item = useRoute<any>().params;
+
+  const pickupAddress = item.rideInfo.pickupLocation.location;
+  const dropAddress = item.rideInfo.dropLocation.location;
+
+  const pickupText = separateAddress(pickupAddress);
+  const dropText = separateAddress(dropAddress);
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Ride Detail */}
@@ -12,18 +24,22 @@ const RideDetailScreen = () => {
           <View style={styles.ridePoint}>
             <Icon name="radio-button-checked" type="material" color="green" />
             <View style={styles.rideInfo}>
-              <Text style={styles.location}>Douglas Crescent Road</Text>
-              <Text style={styles.subText}>Venie</Text>
-              <Text style={styles.subText}>Mon 29, July 3:40PM</Text>
+              <Text style={styles.location}>{pickupText.primary}</Text>
+              <Text style={styles.subText}>{pickupText.secondary}</Text>
+              <Text style={styles.subText}>
+                {item.rideInfo.pickupLocation.dateTime}
+              </Text>
             </View>
           </View>
           <View style={styles.line} />
           <View style={styles.ridePoint}>
             <Icon name="radio-button-checked" type="material" color="red" />
             <View style={styles.rideInfo}>
-              <Text style={styles.location}>Logan Avenue</Text>
-              <Text style={styles.subText}>Aura</Text>
-              <Text style={styles.subText}>Mon 29, July 3:55PM</Text>
+              <Text style={styles.location}>{dropText.primary}</Text>
+              <Text style={styles.subText}>{dropText.secondary}</Text>
+              <Text style={styles.subText}>
+                {item.rideInfo.dropLocation.dateTime}
+              </Text>
             </View>
           </View>
         </View>
@@ -31,23 +47,25 @@ const RideDetailScreen = () => {
 
       {/* Drive Name */}
       <View style={styles.section}>
-        <Text style={styles.heading}>Drive Name</Text>
+        <Text style={styles.heading}>Driver Name</Text>
         <View style={styles.driverDetail}>
           <Avatar
             rounded
             size="large"
             source={{
-              uri: 'https://randomuser.me/api/portraits/men/41.jpg',
+              uri: item.driver.imageUri,
             }}
           />
           <View style={styles.driverInfo}>
-            <Text style={styles.driverName}>Gorge Jacob</Text>
+            <Text style={styles.driverName}>{item.driver.name}</Text>
             <Text style={styles.subText}>You Rated</Text>
             <Icon name="star" type="material" color="gold" />
           </View>
           <View style={styles.bikeInfo}>
-            <Text style={styles.bikeType}>Bike Type: Mini</Text>
-            <Text style={styles.subText}>G5-567-JH</Text>
+            <Text style={styles.bikeType}>
+              Bike Type: {item.driver.bikeType}
+            </Text>
+            <Text style={styles.subText}>{item.driver.bikeNumber}</Text>
           </View>
         </View>
       </View>
@@ -71,25 +89,27 @@ const RideDetailScreen = () => {
         <View style={styles.billDetail}>
           <View style={styles.billRow}>
             <Text style={styles.billText}>Subtotal</Text>
-            <Text style={styles.billText}>$50.00</Text>
+            <Text style={styles.billText}>${item.billDetail.subtotal}</Text>
           </View>
           <View style={styles.billRow}>
             <Text style={styles.billText}>Tax</Text>
-            <Text style={styles.billText}>$0.00</Text>
+            <Text style={styles.billText}>${item.billDetail.tax}</Text>
           </View>
           <View style={styles.billRow}>
             <Text style={styles.totalAmount}>Total Amount</Text>
-            <Text style={styles.totalAmount}>$50.00</Text>
+            <Text style={styles.totalAmount}>
+              ${item.billDetail.totalAmount}
+            </Text>
           </View>
           <View style={styles.billRow}>
             <Text style={styles.billText}>Payment</Text>
-            <Text style={styles.billText}>Credit card</Text>
+            <Text style={styles.billText}>{item.billDetail.paymentMethod}</Text>
           </View>
         </View>
       </View>
 
       {/* Get Invoice Button */}
-      <OrangeButton text='Get Invoice' onPress={()=>{}}/>
+      <OrangeButton text="Get Invoice" onPress={() => {}} />
     </ScrollView>
   );
 };
@@ -97,70 +117,70 @@ const RideDetailScreen = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   section: {
     marginBottom: 20,
   },
   heading: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   rideDetail: {
-    backgroundColor: '#F9F9F9',
+    backgroundColor: "#F9F9F9",
     padding: 15,
     borderRadius: 10,
   },
   ridePoint: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   rideInfo: {
     marginLeft: 10,
   },
   location: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 16,
   },
   subText: {
-    color: 'gray',
+    color: "gray",
   },
   line: {
     height: 1,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: "#E0E0E0",
     marginVertical: 15,
   },
   driverDetail: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   driverInfo: {
     marginLeft: 15,
   },
   driverName: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   bikeInfo: {
-    marginLeft: 'auto',
-    alignItems: 'flex-end',
+    marginLeft: "auto",
+    alignItems: "flex-end",
   },
   bikeType: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   feedback: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 5,
   },
   billDetail: {
-    backgroundColor: '#F9F9F9',
+    backgroundColor: "#F9F9F9",
     padding: 15,
     borderRadius: 10,
   },
   billRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 10,
   },
   billText: {
@@ -168,10 +188,10 @@ const styles = StyleSheet.create({
   },
   totalAmount: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   button: {
-    backgroundColor: '#FF6F00',
+    backgroundColor: "#FF6F00",
     borderRadius: 50,
     paddingVertical: 15,
   },

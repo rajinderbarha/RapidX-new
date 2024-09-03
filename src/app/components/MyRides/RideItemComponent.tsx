@@ -6,6 +6,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { separateAddress } from "../../../../util/getShortAddress";
 
 interface RideItemProps {
   pickupAddress: string;
@@ -22,14 +23,14 @@ export default function RideItemComponent({
   dropDateTime,
   total,
 }: RideItemProps) {
-  const truncateAddress = (address: string, maxLength = 48) => {
-    return address.length > maxLength
-      ? address.slice(0, maxLength) + "..."
-      : address;
-  };
+  // const truncateAddress = (address: string, maxLength = 48) => {
+  //   return address.length > maxLength
+  //     ? address.slice(0, maxLength) + "..."
+  //     : address;
+  // };
 
-  const truncatedPickupAddress = truncateAddress(pickupAddress);
-  const truncatedDropAddress = truncateAddress(dropAddress);
+  const pickupText = separateAddress(pickupAddress);
+  const dropText = separateAddress(dropAddress);
 
   return (
     <View style={styles.rootContainer}>
@@ -47,13 +48,13 @@ export default function RideItemComponent({
         </View>
         <View style={styles.locationContainer}>
           <View style={[styles.locations]}>
-            <Text style={styles.label}>{truncatedPickupAddress}</Text>
-            <Text>{truncatedPickupAddress}</Text>
+            <Text style={styles.label}>{pickupText.primary}</Text>
+            <Text>{pickupText.secondary}</Text>
             <Text style={styles.label}>{pickupDateTime}</Text>
           </View>
           <View style={[styles.locations]}>
-            <Text style={styles.label}>{truncatedDropAddress}</Text>
-            <Text>{truncatedDropAddress}</Text>
+            <Text style={styles.label}>{dropText.primary}</Text>
+            <Text>{dropText.secondary}</Text>
             <Text style={styles.label}>{dropDateTime}</Text>
           </View>
         </View>

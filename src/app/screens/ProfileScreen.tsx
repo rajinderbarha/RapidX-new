@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -14,24 +14,19 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import OrangeButton from "../../ui/OrangeButton";
 import { colors } from "../../../constants/colors";
 import { launchImageLibrary } from "react-native-image-picker";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { ProfileContext } from "../../store/ProfileContext";
 import { UpdateUser } from "../../../util/localAPIs";
 import ProfileInitial from "../components/ProfileInitial";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const profile = {
-  picture: require("../../../assets/sidhu.jpg"),
-  firstName: "Moose",
-  lastName: "Wala",
-  email: "info@rapidx.com",
-  phone: "+1-9654-963-258",
-};
+
 
 const { height, width } = Dimensions.get("screen");
 
 export default function ProfileScreen() {
   const navigation = useNavigation<any>();
-
+  const isFocused = useIsFocused()
   const {
     setIsProfileCompleted,
     firstName,
@@ -43,11 +38,37 @@ export default function ProfileScreen() {
     phoneNumber,
     setPicture,
     picture,
+    setPhoneNumber
   } = useContext(ProfileContext);
 
   const onUpdate = (updatedProfile: any) => {
     console.log("Updated Profile:", updatedProfile);
   };
+
+  useEffect(() => {
+    async function fetchProfileData() {
+      try {
+        const profileData = await AsyncStorage.getItem("profileData");
+        if (profileData) {
+          const parsedProfileData = JSON.parse(profileData);
+          setEmail(parsedProfileData.email);
+          setFirstName(parsedProfileData.firstName);
+          setLastName(parsedProfileData.lastName);
+          setPhoneNumber(parsedProfileData.phoneNumber);
+        }
+      } catch (error) {
+        console.error("Error fetching profile data:", error);
+      }
+    }
+
+    
+
+
+    fetchProfileData();
+    // dependencies - setEmail, setFirstName, setLastName, setPhoneNumber
+  }, [isFocused]);
+
+
 
   const selectProfilePicture = () => {
     const options: any = {
@@ -79,7 +100,7 @@ export default function ProfileScreen() {
     };
     if (firstName && lastName && phoneNumber) {
       await UpdateUser(updatedProfile);
-      setIsProfileCompleted(true);
+      setIsProfileCompleted("yes");
       navigation.navigate("Main");
     } else {
       Alert.alert("Complete your profile first");
@@ -105,7 +126,7 @@ export default function ProfileScreen() {
             </Avatar>
           ) : (
             <View style={styles.avatarAlt}>
-              <ProfileInitial name={firstName} />
+              <ProfileInitial name={firstName ? firstName : '?'} />
               <Avatar.Accessory
                 size={30}
                 onPress={selectProfilePicture}

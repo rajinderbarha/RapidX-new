@@ -52,9 +52,9 @@ export default function MainScreen() {
   // }, [useIsFocused, isProfileCompleted]);
 
 
-  if(!isProfileCompleted){
-    navigation.replace("Profile");
-  }
+  // if(!isProfileCompleted){
+  //   navigation.replace("Profile");
+  // }
 
   const handleModalChange = useCallback((index: any) => {
     const modalHeight = index === 0 ? 0.3 : 0.6; // Update according to your snap points
