@@ -69,9 +69,9 @@ export default function OnFinishRideModal({
       <View style={styles.container}>
         <View style={styles.driverInfo}>
           <View style={styles.driverDetails}>
-            <Text style={styles.driverName}>{driver?.name}</Text>
+            <Text style={styles.driverName}>{driver?.first_name}</Text>
             <View style={styles.rating}>
-              {[...Array(driver?.rating)].map((_, i) => (
+              {[...Array(Math.round( driver?.rating ? driver.rating  : 5))].map((_, i) => (
                 <Icon
                   key={i}
                   name="star"

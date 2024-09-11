@@ -6,7 +6,7 @@ import AddMarker from "./AddMarker";
 import AddMapViewDirections from "./MapViewDirections";
 import MapViewComponent from "./MapViewComponent";
 
-import {driverData} from "../../../../util/driverData";
+import { driverData } from "../../../../util/driverData";
 import { Image } from "react-native";
 import GifImage from "./GifImage";
 import { RideContext } from "../../../store/RideContext";
@@ -27,7 +27,7 @@ export default function Map({ reff, markerType }: MapProps) {
   function GreenLocation() {
     if (pickedLocation && dropLocation) {
       return (
-        <GifImage source={require('../../../../assets/data/greenPulsee.gif')}/>
+        <GifImage source={require("../../../../assets/data/greenPulsee.gif")} />
       );
     } else {
       return null;
@@ -37,8 +37,8 @@ export default function Map({ reff, markerType }: MapProps) {
   function RedLocation() {
     if (pickedLocation && dropLocation) {
       return (
-        <GifImage source={require("../../../../assets/data/redPulsee.gif")}/>
-      )
+        <GifImage source={require("../../../../assets/data/redPulsee.gif")} />
+      );
     } else {
       return null;
     }
@@ -48,28 +48,24 @@ export default function Map({ reff, markerType }: MapProps) {
     <MapViewComponent reff={reff} markerType={markerType}>
       {!driver && pickedLocation && dropLocation && (
         <AddMapViewDirections
-        color="hotpink"
+          color="hotpink"
           reff={reff}
           origin={pickedLocation}
           destination={dropLocation}
         />
       )}
 
-
       {driver && pickedLocation && dropLocation && (
         <AddMapViewDirections
-        color="blue"
+          color="blue"
           reff={reff}
           origin={{
-            latitude : driver.location.latitude,
-            longitude : driver.location.longitude
+            latitude: driver.location.latitude,
+            longitude: driver.location.longitude,
           }}
           destination={pickedLocation}
         />
       )}
-      
-
-
 
       {pickedLocation && (
         <AddMarker
@@ -86,24 +82,21 @@ export default function Map({ reff, markerType }: MapProps) {
         />
       )}
 
-      {driverData.map((driver) => {
-        return (
-          <AddMarker
-            key={driver.driver_id}
-            location={{
-              latitude: driver.latitude,
-              longitude: driver.longitude,
-            }}
-            color="brown"
-            image={
-              <Image
-                style={styles.markerImage}
-                source={require("../../../../assets/bike.png")}
-              />
-            }
-          />
-        );
-      })}
+      {driver && (
+        <AddMarker
+          location={{
+            latitude: driver.location.latitude,
+            longitude: driver.location.longitude,
+          }}
+          color="brown"
+          image={
+            <Image
+              style={styles.markerImage}
+              source={require("../../../../assets/bike.png")}
+            />
+          }
+        />
+      )}
     </MapViewComponent>
   );
 }

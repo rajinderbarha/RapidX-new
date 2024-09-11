@@ -3,19 +3,21 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { io } from "socket.io-client";
 import { useContext } from "react";
 
+const SERVERURL = 'https://rw6v05jh-8000.inc1.devtunnels.ms'
+
 interface updatingUserProps {
   phoneNumber: string;
   firstName: string;
   lastName: string;
   email: string | null;
 }
-
+// https://rw6v05jh-8000.inc1.devtunnels.ms
 export default async function AuthenticatePhoneNumber(
   phoneNumber: string,
   setIsNewUser: (value: any) => void,
   setIsProfileCompleted: (value: any) => void
 ) {
-  const URL = "https://rw6v05jh-8000.inc1.devtunnels.ms/api/users/token/";
+  const URL = SERVERURL+"/api/users/token/";
 
   try {
     const response = await axios.post(URL, { phoneNumber });
@@ -56,7 +58,7 @@ export async function fetchToken() {
   try {
     const storedToken = await AsyncStorage.getItem("token");
     if (storedToken) {
-      console.log("got token");
+      console.log("got token", storedToken);
       return storedToken;
     }
   } catch (error) {
@@ -67,7 +69,7 @@ export async function fetchUserId() {
   try {
     const userId = await AsyncStorage.getItem("userId");
     if (userId) {
-      console.log("got Id");
+      console.log("got Id", userId );
       return userId;
     }
   } catch (error) {
@@ -91,14 +93,15 @@ export async function UpdateUser({
   lastName,
   email,
 }: updatingUserProps) {
-  const URL = "https://rw6v05jh-8000.inc1.devtunnels.ms/api/users/update-user";
+  const token = await fetchToken()
+  const URL = SERVERURL+"/api/users/update-user";
   const gender = "Male";
   try {
     const response = await fetch(URL, {
       method: "PUT",
       headers: {
         Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YjJmZTg4YzdkNWQ0NzljYWIzM2EyYyIsImlhdCI6MTcyMzQ0Mjg0MywiZXhwIjoxNzI2MDM0ODQzfQ.FSpBpqBYYC1gtWIjfci4N3WI7dtwHpba-uQc_MvEjhU",
+          `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -137,11 +140,11 @@ export async function UpdateUser({
 
 export async function getDriverDetails() {
   const URL =
-    "https://rw6v05jh-8000.inc1.devtunnels.ms/api/users/ride-accept-driver";
+    SERVERURL+"/api/users/ride-accept-driver";
 
   const ride_id = await fetchUserId();
   const driver_id = "66b9f461091131eca3542607";
-
+  
   const location = {
     latitude: 30.70879140071582,
     longitude: 76.70999232731619,

@@ -1,90 +1,63 @@
 // import axios from "axios";
+import { fetchToken, fetchUserId } from "./localAPIs";
 
-import { fetchUserId } from "./localAPIs";
+const SERVERURL = 'https://rw6v05jh-8000.inc1.devtunnels.ms'
 
-// export default async function MapData(
-//   user_id: string,
-//   origin: {
-//     latitude: number;
-//     longitude: number;
-//   },
-//   destination: {
-//     latitude: number;
-//     longitude: number;
-//   },
-//   distance: number,
-//   duration: number,
-//   pickupAddress: string,
-//   dropAddress: string
-// ) {
-//   const URL =
-//     "https://rw6v05jh-8000.inc1.devtunnels.ms/api/users/ride-book-user";
-//   //gets fare price
-//   try {
-//     const response = await axios.post(
-//       URL,
-//       {
-//         user_id: user_id,
-//         user_origin: origin,
-//         user_destination: destination,
-//         distance: distance,
-//         duration: duration,
-//         dropAddress: dropAddress,
-//         pickupAddress: pickupAddress,
-//       },
-//       {
-//         headers: {
-//           Authorization:
-//             "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YjJmZTg4YzdkNWQ0NzljYWIzM2EyYyIsImlhdCI6MTcyMzQ0Mjg0MywiZXhwIjoxNzI2MDM0ODQzfQ.FSpBpqBYYC1gtWIjfci4N3WI7dtwHpba-uQc_MvEjhU",
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
+interface mapDataInterface {
+ 
+    user_origin: {
+      latitude: number;
+      longitude: number;
+    };
+    user_destination: {
+      latitude: number;
+      longitude: number;
+    };
+    distance: number;
+    duration: number;
+    pickupAddress: string;
+    dropAddress: string;
+    firstName : string
+  };
 
-//     console.log("response: ", response.data);
 
-//     return response.data.fares;
-//   } catch (error) {
-//     console.log("error in mapData : ", error);
-//   }
-
-//   return;
-// }
-
-export default async function MapData(
-  origin: {
-    latitude: number;
-    longitude: number;
-  },
-  destination: {
-    latitude: number;
-    longitude: number;
-  },
-  distance: number,
-  duration: number,
-  pickupAddress: string,
-  dropAddress: string
-) {
+export default async function MapData(userData : mapDataInterface) {
   const URL =
-    "https://rw6v05jh-8000.inc1.devtunnels.ms/api/users/ride-book-user";
+   SERVERURL+"/api/users/ride-book-user";
   const user_id = await fetchUserId();
+  const storedToken = await fetchToken();
+
 
   try {
+
+     console.log('Requesting to: ', URL);
+  console.log('Request Body: ', {
+    user_id: user_id,
+    user_origin: userData.user_origin,
+    user_destination: userData.user_destination,
+    distance: userData.distance,
+    duration: userData.duration,
+    dropAddress: userData.dropAddress,
+    pickupAddress: userData.pickupAddress,
+        firstName : userData.firstName
+
+  });
+
+
     const response = await fetch(URL, {
       method: "POST",
       headers: {
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YjJmZTg4YzdkNWQ0NzljYWIzM2EyYyIsImlhdCI6MTcyMzQ0Mjg0MywiZXhwIjoxNzI2MDM0ODQzfQ.FSpBpqBYYC1gtWIjfci4N3WI7dtwHpba-uQc_MvEjhU",
+        Authorization: `Bearer ${storedToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         user_id: user_id,
-        user_origin: origin,
-        user_destination: destination,
-        distance: distance,
-        duration: duration,
-        dropAddress: dropAddress,
-        pickupAddress: pickupAddress,
+        user_origin: userData.user_origin,
+    user_destination: userData.user_destination,
+        distance: userData.distance,
+        duration: userData.duration,
+        dropAddress: userData.dropAddress,
+        pickupAddress: userData.pickupAddress,
       }),
     });
 
@@ -99,15 +72,14 @@ export default async function MapData(
 
     const data = await response.json();
 
-    if (!data.rideDetails || typeof data.rideDetails.fares !== "number") {
-      // Handle missing or incorrect data
-      console.error('Expected "fares" in "rideDetails" but got:', data);
-      throw new Error('Missing or invalid "fares" in response data.');
+    if (!data.rideDetails.driver_details) {
+      throw new Error("Unexpected response structure: Missing driver details");
     }
 
     // console.log("response: ", data);
 
-    return data.rideDetails.fares;
+    // return data;
+    return data.rideDetails.driver_details;
   } catch (error: any) {
     // Log detailed error information
     console.error("Error in mapData: ", error.message);
@@ -119,14 +91,14 @@ export default async function MapData(
 
 export async function fetchFare(distance: number, duration: number) {
   const URL =
-    "https://rw6v05jh-8000.inc1.devtunnels.ms/api/users/calculate-fares";
-
+    SERVERURL+"/api/users/calculate-fares";
+  const token = await fetchToken()
   try {
     const response = await fetch(URL, {
       method: "POST",
       headers: {
         Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2YjJmZTg4YzdkNWQ0NzljYWIzM2EyYyIsImlhdCI6MTcyMzQ0Mjg0MywiZXhwIjoxNzI2MDM0ODQzfQ.FSpBpqBYYC1gtWIjfci4N3WI7dtwHpba-uQc_MvEjhU",
+          `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({

@@ -9,6 +9,8 @@ import { RideContext } from "../../../store/RideContext";
 import LoadingBar from "../../../ui/LoadingBar";
 import { driverData } from "../../../../util/driverData";
 import { getDriverDetails } from "../../../../util/localAPIs";
+import MapData from "../../../../util/mapApis";
+import { ProfileContext } from "../../../store/ProfileContext";
 // import { useSocket } from "../../../../App";
 
 interface BottomModalProps {
@@ -20,26 +22,35 @@ export default function ConfirmLocationModal({
   isFocused,
   onChange,
 }: BottomModalProps) {
-  const { distance, fare,dropAddress,dropLocation,pickedLocation,pickupAddress } = useContext(LocationContext);
-  const { rideIsBooked, setRideIsBooked, driver, setDriver } =
-    useContext(RideContext);
- 
+  const {
+    distance,
+    fare,
+    dropAddress,
+    dropLocation,
+    pickedLocation,
+    pickupAddress,
+  } = useContext(LocationContext);
+  const {
+    rideIsBooked,
+    setRideIsBooked,
+    driver,
+    setDriver,
+    rideIsAccepted,
+    setRideIsAccepted,
+  } = useContext(RideContext);
+  const { firstName } = useContext(ProfileContext);
 
-    // const {requestRide, driverDetails} = useSocket()
+  // const {requestRide, driverDetails} = useSocket()
   const snapPoints = useMemo(() => ["25%"], []);
 
   const navigation = useNavigation<any>();
 
-  function bookRideHandler() {
-    setRideIsBooked(true);
-  }
-  
   const userData = {
+    firstName: firstName,
     distance: 15,
     duration: 20,
     dropAddress: dropAddress || "Unknown Drop Address",
     pickupAddress: pickupAddress || "Unknown Pickup Address",
-    user_id: "66bc9d0e8f067abcb83e106d",
     user_origin: {
       latitude: pickedLocation?.latitude || 0, // Fallback to 0 if undefined
       longitude: pickedLocation?.longitude || 0, // Fallback to 0 if undefined
@@ -47,25 +58,14 @@ export default function ConfirmLocationModal({
     user_destination: {
       latitude: dropLocation?.latitude || 0, // Fallback to 0 if undefined
       longitude: dropLocation?.longitude || 0, // Fallback to 0 if undefined
-    }
+    },
   };
-
 
   function rideBookHandler() {
     // requestRide(userData)
-    console.log('userData : ', userData)
+    setRideIsBooked(true);
+    console.log("userData : ", userData);
   }
-
-
-  // function getDriver(arr : any){
-  //   if (arr.length === 0) {
-  //     return null; // or handle empty array case as needed
-  //   }
-  //   const randomIndex = Math.floor(Math.random() * arr.length);
-  //   return arr[randomIndex];
-  // }
-
-  // const newDriver = getDriver(driverData)
 
   useEffect(() => {
     console.log("driver : ", driver);
@@ -74,19 +74,26 @@ export default function ConfirmLocationModal({
   useEffect(() => {
     if (rideIsBooked) {
       async function getDriver() {
-        await getDriverDetails()
-          .then((driverDetails) => setDriver(driverDetails))
-          .then(() => navigation.navigate("Main"));
+        try {
+          await MapData(userData).then((driverDetails) => {
+            console.log("response:", driverDetails);
+            setDriver(driverDetails);
+            setRideIsAccepted(true);
+          });
+        } catch (error) {
+          console.log("Error fetching driver:", error);
+          setRideIsBooked(false);
+        }
       }
       getDriver();
-      // const timer = setTimeout(() => {
-      //   navigation.navigate("Main");
-      // }, 5000);
-
-      // return () => clearTimeout(timer);
     }
-  }, [rideIsBooked, navigation]);
+  }, [rideIsBooked]);
 
+  useEffect(() => {
+    if (driver && rideIsAccepted) {
+      navigation.navigate("Main");
+    }
+  }, [driver, rideIsAccepted]);
   return (
     <CustomBottomModal
       isFocused={isFocused}
@@ -109,7 +116,7 @@ export default function ConfirmLocationModal({
           <View style={styles.buttonContainer}>
             <OrangeButton
               text="Book Ride"
-              onPress={()=>rideBookHandler()}
+              onPress={() => rideBookHandler()}
               style={{}}
             />
           </View>

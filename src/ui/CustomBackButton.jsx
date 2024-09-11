@@ -2,14 +2,17 @@ import React, { useContext } from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { LocationContext } from '../store/LocationContext';
+import { RideContext } from '../store/RideContext';
 
 export default function CustomBackButton() {
   const navigation = useNavigation();
   const { reset } = useContext(LocationContext)
+  const {resetRideData} = useContext(RideContext)
 
 function pressHandler(){
   navigation.goBack();
-  reset()
+  reset();
+  resetRideData();
 };
 
 

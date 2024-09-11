@@ -15,7 +15,6 @@
       "supportsTablet": true
     },
     "android": {
-      
       "googleServicesFile": "./google-services.json",
       "package": "com.fuvay.RapidX",
       "adaptiveIcon": {
@@ -27,7 +26,6 @@
           "apiKey": "AIzaSyCV2NRNl0uVeY37ID1gIoYgJexr9SBDn2Q"
         }
       }
-      
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -51,6 +49,14 @@
         "expo-image-picker",
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/favicon.png",
+          "color": "#440000",
+          "defaultChannel": "default"
         }
       ]
     ]

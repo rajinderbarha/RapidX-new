@@ -8,7 +8,8 @@ interface RideInterface {
   driver: {
     _id: string,
     phone_number: number,
-    name: string,
+    first_name: string,
+    last_name : string ,
     email: string,
     gender: string,
     profile_picture: string,
@@ -26,6 +27,8 @@ interface RideInterface {
   setRideIsCompleted: (newState: boolean) => void;
   paymentIsDone: boolean;
   setPaymentIsDone: (newState: boolean) => void;
+  rideIsAccepted: boolean;
+  setRideIsAccepted: (newState: boolean) => void;
   resetRideData: () => void;
 }
 
@@ -37,7 +40,8 @@ export const RideContext = createContext<RideInterface>({
   driver: {
     _id: "",
     phone_number: 0,
-    name: "",
+    first_name: "",
+    last_name : "",
     email: "",
     gender: "",
     profile_picture: "",
@@ -55,6 +59,8 @@ export const RideContext = createContext<RideInterface>({
   setRideIsCompleted: () => {},
   paymentIsDone: false,
   setPaymentIsDone: () => {},
+  rideIsAccepted :  false,
+  setRideIsAccepted : ()=>{},
   resetRideData: () => {},
 });
 
@@ -64,6 +70,7 @@ export default function RideContextProvider({ children }: PropsWithChildren) {
   const [paymentIsDone, setPaymentIsDone] = useState(false);
   const [driver, setDriver] = useState(null);
   const [rideIsStarted, setRideIsStarted] = useState(false);
+  const [rideIsAccepted, setRideIsAccepted] = useState(false)
 
   function resetRideData() {
     setRideIsBooked(false),
@@ -84,6 +91,8 @@ export default function RideContextProvider({ children }: PropsWithChildren) {
     setPaymentIsDone,
     rideIsStarted,
     setRideIsStarted,
+    rideIsAccepted,
+    setRideIsAccepted
   };
 
   return <RideContext.Provider value={value}>{children}</RideContext.Provider>;
