@@ -10,6 +10,7 @@ import RNPickerSelect from "react-native-picker-select";
 import { RideContext } from "../../../store/RideContext";
 import { LocationContext } from "../../../store/LocationContext";
 import getShortAddress from "../../../../util/getShortAddress";
+import { ProfileContext } from "../../../store/ProfileContext";
 
 interface BottomModalProps {
   onChange: (index: number) => void;
@@ -22,10 +23,11 @@ export default function OnFinishRideModal({
 }: BottomModalProps) {
   const navigation = useNavigation<any>();
   const { setPaymentIsDone, driver } = useContext(RideContext);
-  const { pickupAddress, dropAddress, reset, fare } = useContext(LocationContext);
+  const { pickupAddress, dropAddress, reset, fare } =
+    useContext<any>(LocationContext);
+  const { firstName, email, phoneNumber } = useContext(ProfileContext);
   const [paymentMethod, setPaymentMethod] = useState("");
   const snapPoints = useMemo(() => ["69%", "90%"], []);
-
 
   const shortPickupAddress = getShortAddress(pickupAddress);
   const shortDropAddress = getShortAddress(dropAddress);
@@ -41,7 +43,7 @@ export default function OnFinishRideModal({
     { label: "Wallet", value: "Wallet" },
   ];
 
-  const totalAmount = "$50.00";
+  const totalAmount = Math.round(fare);
 
   function payNowHandler() {
     if (!paymentMethod) {
@@ -54,7 +56,10 @@ export default function OnFinishRideModal({
       reset();
       Alert.alert("Paisa Paisa");
     } else if (paymentMethod === "UPI/CARDS") {
-      navigation.navigate("Payment");
+      navigation.navigate("Payment", {
+        amount: totalAmount,
+        profile: { firstName, email, phoneNumber },
+      });
     } else if (paymentMethod === "Wallet") {
       Alert.alert("Please wait till we add a wallet feature");
     }
@@ -71,23 +76,32 @@ export default function OnFinishRideModal({
           <View style={styles.driverDetails}>
             <Text style={styles.driverName}>{driver?.first_name}</Text>
             <View style={styles.rating}>
-              {[...Array(Math.round( driver?.rating ? driver.rating  : 5))].map((_, i) => (
-                <Icon
-                  key={i}
-                  name="star"
-                  type="font-awesome"
-                  color="#FFD700"
-                  size={20}
-                  style={{ marginHorizontal: 3 }}
-                />
-              ))}
+              {[...Array(Math.round(driver?.rating ? driver.rating : 5))].map(
+                (_, i) => (
+                  <Icon
+                    key={i}
+                    name="star"
+                    type="font-awesome"
+                    color="#FFD700"
+                    size={20}
+                    style={{ marginHorizontal: 3 }}
+                  />
+                )
+              )}
             </View>
           </View>
-          <Avatar rounded size="medium" source={{uri : driver?.profile_picture }} />
+          <Avatar
+            rounded
+            size="medium"
+            source={{ uri: driver?.profile_picture }}
+          />
         </View>
 
         <View style={styles.vehicleInfo}>
-          <Image source={{uri : driver?.vehicle_image}} style={styles.vehicleImage} />
+          <Image
+            source={{ uri: driver?.vehicle_image }}
+            style={styles.vehicleImage}
+          />
           <View style={styles.vehicleDetails}>
             <Text style={styles.arrivalTime}>Your Ride is Finished.</Text>
             <Text style={styles.arrivalTime}>Bike Type</Text>
@@ -134,7 +148,7 @@ export default function OnFinishRideModal({
             }}
           >
             <Text style={styles.totalAmount}>Total Amount:</Text>
-            <Text style={styles.totalAmount}>₹ {fare}</Text>
+            <Text style={styles.totalAmount}>₹ {totalAmount}</Text>
           </View>
           <View style={styles.paymentContainer}>
             <View style={{ flex: 1 }}>
@@ -154,7 +168,6 @@ export default function OnFinishRideModal({
                 text={"Pay now"}
                 onPress={payNowHandler}
                 style={{ backgroundColor: "#33a823" }}
-            
               />
             </View>
           </View>
@@ -295,6 +308,3 @@ const pickerSelectStyles = StyleSheet.create({
     // backgroundColor : colors.primary,
   },
 });
-
-
-

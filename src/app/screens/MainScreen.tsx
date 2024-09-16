@@ -26,6 +26,7 @@ import { driverData } from "../../../util/driverData";
 import OnFinishRideModal from "../components/BottomModals/OnFinishRideModal";
 import TripReviewModal from "../components/BottomModals/TripReviewModal";
 import { ProfileContext } from "../../store/ProfileContext";
+import { updateDriverLocation } from "../../../util/socket";
 
 const { height } = Dimensions.get("screen");
 
@@ -55,6 +56,13 @@ export default function MainScreen() {
   // if(!isProfileCompleted){
   //   navigation.replace("Profile");
   // }
+
+  useEffect(() => {
+    rideIsBooked && updateDriverLocation()
+
+  }, [rideIsBooked, isFocused]);
+
+
 
   const handleModalChange = useCallback((index: any) => {
     const modalHeight = index === 0 ? 0.3 : 0.6; // Update according to your snap points
@@ -99,7 +107,7 @@ export default function MainScreen() {
       {rideIsBooked && driver && (
         <OnBookedRideModal onChange={handleModalChange} isFocused={isFocused} />
       )}
-      {rideIsCompleted && (
+      {rideIsCompleted && !paymentIsDone &&(
         <OnFinishRideModal onChange={handleModalChange} isFocused={isFocused} />
       )}
       {paymentIsDone && (

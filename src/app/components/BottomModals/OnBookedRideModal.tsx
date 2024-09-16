@@ -25,11 +25,12 @@ const OnBookedRideModal: React.FC<BottomModalProps> = ({
 
   const snapPoints = useMemo(() => ["30%", "62%", "80%"], []);
 
-  const { primary, secondary } = getShortAddress(pickupAddress);
+  const shortPickupAddress = getShortAddress(pickupAddress);
+  const shortDropAddress = getShortAddress(dropAddress);
 
   const tripRoute = [
-    { name: "Douglas Crescent Road", sub: "Venie" },
-    { name: "Logan Avenue", sub: "Aura" },
+    { name: shortPickupAddress.primary, sub: shortPickupAddress.secondary },
+    { name: shortDropAddress.primary, sub: shortDropAddress.secondary },
   ];
 
   const totalAmount = "$50.00";
@@ -96,8 +97,8 @@ const OnBookedRideModal: React.FC<BottomModalProps> = ({
                   size={40}
                 />
                 <View style={styles.routeDetails}>
-                  <Text style={styles.routeName}>{primary}</Text>
-                  <Text style={styles.routeSub}>{secondary}</Text>
+                  <Text style={styles.routeName}>{route.name}</Text>
+                  <Text style={styles.routeSub}>{route.sub}</Text>
                 </View>
               </View>
             ))}

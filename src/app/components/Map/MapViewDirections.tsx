@@ -73,6 +73,7 @@ export default function AddMapViewDirections({
             // result.legs[0].end_address
            
           );
+          
           setFare(fare)
           
         }

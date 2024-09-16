@@ -28,7 +28,7 @@ export default function MainHeader() {
   }, [pickedLocation]);
 
   function favouriteHandler() {
-    navigation.navigate("Ride Details")
+    navigation.navigate("Payment", {amount : 69})
     // Handle favourite action here
   }
 

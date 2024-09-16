@@ -30,6 +30,8 @@ interface RideInterface {
   rideIsAccepted: boolean;
   setRideIsAccepted: (newState: boolean) => void;
   resetRideData: () => void;
+  isSocketConnected : boolean;
+  setIsSocketConnected : (state : boolean)=>void
 }
 
 export const RideContext = createContext<RideInterface>({
@@ -62,6 +64,8 @@ export const RideContext = createContext<RideInterface>({
   rideIsAccepted :  false,
   setRideIsAccepted : ()=>{},
   resetRideData: () => {},
+  isSocketConnected : false,
+  setIsSocketConnected : ()=>{}
 });
 
 export default function RideContextProvider({ children }: PropsWithChildren) {
@@ -70,7 +74,8 @@ export default function RideContextProvider({ children }: PropsWithChildren) {
   const [paymentIsDone, setPaymentIsDone] = useState(false);
   const [driver, setDriver] = useState(null);
   const [rideIsStarted, setRideIsStarted] = useState(false);
-  const [rideIsAccepted, setRideIsAccepted] = useState(false)
+  const [rideIsAccepted, setRideIsAccepted] = useState(false);
+  const [isSocketConnected, setIsSocketConnected] = useState(false);
 
   function resetRideData() {
     setRideIsBooked(false),
@@ -92,7 +97,9 @@ export default function RideContextProvider({ children }: PropsWithChildren) {
     rideIsStarted,
     setRideIsStarted,
     rideIsAccepted,
-    setRideIsAccepted
+    setRideIsAccepted,
+    isSocketConnected,
+    setIsSocketConnected
   };
 
   return <RideContext.Provider value={value}>{children}</RideContext.Provider>;
