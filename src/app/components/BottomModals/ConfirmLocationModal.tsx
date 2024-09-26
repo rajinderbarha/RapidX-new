@@ -8,9 +8,15 @@ import { RideContext } from "../../../store/RideContext";
 
 import LoadingBar from "../../../ui/LoadingBar";
 import { driverData } from "../../../../util/driverData";
-import { getDriverDetails } from "../../../../util/localAPIs";
+import {
+  fetchToken,
+  fetchUserId,
+  getDriverDetails,
+} from "../../../../util/localAPIs";
 import MapData from "../../../../util/mapApis";
 import { ProfileContext } from "../../../store/ProfileContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import socket from "../../../../util/socket";
 // import { useSocket } from "../../../../App";
 
 interface BottomModalProps {
@@ -39,13 +45,13 @@ export default function ConfirmLocationModal({
     setRideIsAccepted,
   } = useContext(RideContext);
   const { firstName } = useContext(ProfileContext);
-
   // const {requestRide, driverDetails} = useSocket()
   const snapPoints = useMemo(() => ["25%"], []);
 
   const navigation = useNavigation<any>();
 
   const userData = {
+    user_id : '66f2570b149b0193379e8577',
     firstName: firstName,
     distance: 15,
     duration: 20,
@@ -61,8 +67,24 @@ export default function ConfirmLocationModal({
     },
   };
 
-  function rideBookHandler() {
-    // requestRide(userData)
+  const connectSocket = async () => {
+    try {
+      const userId = await fetchUserId();
+
+      // Emit user connection event
+      socket.emit("userConnected", { userId: userId });
+
+      // Handle socket errors
+      socket.on("error", (err) => {
+        console.error("Socket error:", err);
+      });
+    } catch (err) {
+      console.error("Error fetching user data:", err);
+    }
+  };
+
+  async function rideBookHandler() {
+    await connectSocket();
     setRideIsBooked(true);
     console.log("userData : ", userData);
   }
@@ -73,20 +95,27 @@ export default function ConfirmLocationModal({
 
   useEffect(() => {
     if (rideIsBooked) {
-      async function getDriver() {
-        try {
-          await MapData(userData).then((driverDetails) => {
-            console.log("response:", driverDetails);
-            setDriver(driverDetails);
-            setRideIsAccepted(true);
-          });
-        } catch (error) {
-          console.log("Error fetching driver:", error);
+      socket.emit("bookRide", userData);
+      console.log('userData is :', userData)
+      socket.on("rideBooked", (data) => {
+        console.log("Ride Booked:", data);
+      });
+
+      socket.on("rideConfirmed", (driverDetails) => {
+        console.log("Ride confirmed:", driverDetails);
+        if (!driverDetails) {
           setRideIsBooked(false);
+          return;
         }
-      }
-      getDriver();
+        setDriver(driverDetails?.driverDetails);
+        setRideIsAccepted(true);
+      });
     }
+    return () => {
+      socket.off("rideBooked");
+      socket.off("rideConfirmed");
+    };
+ 
   }, [rideIsBooked]);
 
   useEffect(() => {
@@ -162,3 +191,24 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+
+   // if (rideIsBooked) {
+    //   async function getDriver() {
+    //     try {
+    //       await MapData(userData).then((driverDetails) => {
+    //         console.log("response:", driverDetails);
+    //         if(!driverDetails){
+    //           setRideIsBooked(false);
+    //           return;
+    //         }
+    //         setDriver(driverDetails);
+    //         setRideIsAccepted(true);
+    //       });
+    //     } catch (error) {
+    //       console.log("Error fetching driver:", error);
+    //       setRideIsBooked(false);
+    //     }
+    //   }
+    //   getDriver();
+    // }

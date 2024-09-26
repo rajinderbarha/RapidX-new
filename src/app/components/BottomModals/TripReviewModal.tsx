@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import BottomSheet from "@gorhom/bottom-sheet";
 import { AirbnbRating } from "@rneui/base";
 import CustomBottomModal from "./CustomBottomModal";
 import { colors } from "../../../../constants/colors";
@@ -30,7 +29,7 @@ export default function TripReviewModal({ onChange, isFocused }: any) {
             source={{uri : driver?.profile_picture}} // Replace with your driver image URL
             style={styles.driverImage}
           />
-          <Text style={styles.driverName}>{driver?.name}</Text>
+          <Text style={styles.driverName}>{driver?.first_name}</Text>
           <AirbnbRating
             count={5}
             defaultRating={driver?.rating}

@@ -11,6 +11,7 @@ import { RideContext } from "../../../store/RideContext";
 import { LocationContext } from "../../../store/LocationContext";
 import getShortAddress from "../../../../util/getShortAddress";
 import { ProfileContext } from "../../../store/ProfileContext";
+import ProfileInitial from "../ProfileInitial";
 
 interface BottomModalProps {
   onChange: (index: number) => void;
@@ -90,11 +91,19 @@ export default function OnFinishRideModal({
               )}
             </View>
           </View>
-          <Avatar
-            rounded
-            size="medium"
-            source={{ uri: driver?.profile_picture }}
-          />
+          { driver?.profile_picture ? (<Avatar
+              rounded
+              size="medium"
+              source={{ uri: driver.profile_picture }}
+            />
+          ) : (
+            <View style={styles.avatarAlt}>
+              <ProfileInitial name={driver?.first_name ? driver.first_name : '?'} /> 
+              
+            </View>
+          )
+
+            }
         </View>
 
         <View style={styles.vehicleInfo}>
@@ -281,6 +290,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 10,
   },
+  avatarAlt : {
+    borderWidth: 2,
+    borderColor: colors.primary,
+    height : 75,
+    width : 75,
+    borderRadius : 50,
+    alignItems : 'center',
+    justifyContent : 'center',
+    marginRight : 10
+  },
 });
 
 const pickerSelectStyles = StyleSheet.create({
@@ -307,4 +326,5 @@ const pickerSelectStyles = StyleSheet.create({
     paddingRight: 10, // to ensure the text is never behind the icon
     // backgroundColor : colors.primary,
   },
+  
 });

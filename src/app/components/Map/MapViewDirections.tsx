@@ -19,21 +19,22 @@ interface DirectionProps {
     longitude: number;
   };
   reff: any;
-  color : string
+  color: string;
 }
 
 export default function AddMapViewDirections({
   origin,
   destination,
   reff,
-  color
+  color,
 }: DirectionProps) {
   const diractionsRef = useRef();
   const { setDistance } = useContext(LocationContext);
-  const { pickupAddress, dropAddress, setFare } = useContext(LocationContext);
+  const { pickupAddress, dropAddress, setFare, fare } =
+    useContext(LocationContext);
 
-  const pickupAddressRef = useRef(pickupAddress);
-  const dropAddressRef = useRef(dropAddress);
+  // const pickupAddressRef = useRef(pickupAddress);
+  // const dropAddressRef = useRef(dropAddress);
 
   return (
     <MapViewDirections
@@ -62,22 +63,21 @@ export default function AddMapViewDirections({
         console.log(`Distance: ${result.distance} km`);
         console.log(`Duration: ${result.duration} min.`);
         async function sendData() {
-          console.log('fetching fare')
-          const fare = await fetchFare(
+          console.log("fetching fare");
+          const newfare = await fetchFare(
             // user_id,
             // origin,
             // destination,
             result.distance,
-            result.duration,
+            result.duration
             // result.legs[0].start_address,
             // result.legs[0].end_address
-           
           );
-          
-          setFare(fare)
-          
+
+          setFare(Math.round(newfare));
         }
-        sendData();
+
+        !fare && sendData();
         reff.current?.fitToCoordinates(result.coordinates, {
           edgePadding: {
             right: width / 20,

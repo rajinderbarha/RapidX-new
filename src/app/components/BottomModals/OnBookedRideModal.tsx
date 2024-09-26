@@ -9,6 +9,7 @@ import OrangeButton from "../../../ui/OrangeButton";
 import { RideContext } from "../../../store/RideContext";
 import { LocationContext } from "../../../store/LocationContext";
 import getShortAddress from "../../../../util/getShortAddress";
+import ProfileInitial from "../ProfileInitial";
 
 interface BottomModalProps {
   onChange: (index: number) => void;
@@ -64,11 +65,19 @@ const OnBookedRideModal: React.FC<BottomModalProps> = ({
                 ))}
               </View>
             </View>
-            <Avatar
+            { driver.profile_picture ? (<Avatar
               rounded
               size="medium"
               source={{ uri: driver.profile_picture }}
             />
+          ) : (
+            <View style={styles.avatarAlt}>
+              <ProfileInitial name={driver.first_name ? driver.first_name : '?'} /> 
+              
+            </View>
+          )
+
+            }
           </View>
 
           <View style={styles.vehicleInfo}>
@@ -251,6 +260,16 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     fontSize: 16,
     color: "white",
+  },
+  avatarAlt : {
+    borderWidth: 2,
+    borderColor: colors.primary,
+    height : 75,
+    width : 75,
+    borderRadius : 50,
+    alignItems : 'center',
+    justifyContent : 'center',
+    marginRight : 10
   },
 });
 

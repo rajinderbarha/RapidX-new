@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions, Alert } from "react-native";
 import MainHeader from "../components/HEADER/MainHeader";
 import Map from "../components/Map/Map";
 import MyLocationButton from "../../ui/MyLocationButton";
@@ -26,13 +26,14 @@ import { driverData } from "../../../util/driverData";
 import OnFinishRideModal from "../components/BottomModals/OnFinishRideModal";
 import TripReviewModal from "../components/BottomModals/TripReviewModal";
 import { ProfileContext } from "../../store/ProfileContext";
-import { updateDriverLocation } from "../../../util/socket";
+import socket from "../../../util/socket";
 
 const { height } = Dimensions.get("screen");
 
 export default function MainScreen() {
   const navigation = useNavigation() as any;
   const { location, reset } = useContext(LocationContext);
+  const { setRideIsBooked, setDriver } = useContext(RideContext);
   const { isProfileCompleted } = useContext(ProfileContext);
   const {
     rideIsBooked,
@@ -57,11 +58,29 @@ export default function MainScreen() {
   //   navigation.replace("Profile");
   // }
 
+  // useEffect(() => {
+  //   rideIsBooked && updateDriverLocation()
+
+  // }, [rideIsBooked, isFocused]);
+
   useEffect(() => {
-    rideIsBooked && updateDriverLocation()
+    if (socket) {
+      socket.on('rideCancelled', (data) => {
+        console.log(data.message);
+        console.log('Ride was cancelled by:', data.cancelledBy);
+        setRideIsBooked(false);
+        reset();
+        setDriver(null);
+        Alert.alert(`Ride was cancelled by ${data.cancelledBy}`);
+      });
 
-  }, [rideIsBooked, isFocused]);
-
+      // Cleanup
+      return () => {
+        socket.off('rideCancelled');
+      };
+    }
+  }, [socket]);
+  
 
 
   const handleModalChange = useCallback((index: any) => {
