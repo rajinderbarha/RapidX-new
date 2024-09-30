@@ -63,7 +63,8 @@ export default function MainScreen() {
     setDriver,
     setRideIsAccepted,
     rideIsAccepted,
-    driverReachedLocation
+    driverReachedLocation,
+    setRideIsStarted
   } = useContext(RideContext);
   const mapRef = useRef<MapView>(null);
   const [buttonBottomPosition, setButtonBottomPosition] = useState(20);
@@ -101,6 +102,12 @@ export default function MainScreen() {
         Alert.alert('Driver Arrived', 'Driver has reached your location');
       })
 
+
+      socket.on('rideStarted', (data)=>{
+        console.log('Ride started');
+        setRideIsStarted(true);
+      })
+
       // Cleanup
       return () => {
         socket.off("rideCancelled");
@@ -109,21 +116,31 @@ export default function MainScreen() {
   }, [socket]);
 
   useEffect(() => {
-    socket.on("driverLiveLocationUpdate", (newLocation) => {
-      if (rideIsAccepted &&driver && newLocation.lat && newLocation.lng) {
-        setDriver((prevDriver : driver) => ({
-          ...prevDriver,
-          location: {
-            latitude: newLocation.lat,
-            longitude: newLocation.lng,
-          },
-        }));
-      } else {
-        console.error("Driver is not initialized or location data is invalid.");
-      }
-    });
-    
-  }, [rideIsAccepted]);
+    if (rideIsAccepted && driver) { // Only listen for updates if ride is accepted and driver is initialized
+      const handleLocationUpdate = (newLocation : any) => {
+        if (newLocation.driverLocation.lat && newLocation.driverLocation.lng) {
+          setDriver((prevDriver : any) => ({
+            ...prevDriver,
+            location: {
+              latitude: newLocation.driverLocation.lat,
+              longitude: newLocation.driverLocation.lng,
+            },
+          }));
+        } else {
+          console.error("Invalid location data:", newLocation.driverLocation);
+        }
+      };
+  
+      socket.on("driverLiveLocationUpdate", handleLocationUpdate);
+  
+      return () => {
+        // Clean up the event listener to avoid memory leaks or multiple listeners
+        socket.off("driverLiveLocationUpdate", handleLocationUpdate);
+      };
+    } else {
+      console.log('Driver is not yet initialized or ride is not accepted.');
+    }
+  }, [rideIsAccepted, driver]); 
   // {lat: 30.70248106104791, lng: 76.70058779418468}
 
   const handleModalChange = useCallback((index: any) => {

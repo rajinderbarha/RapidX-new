@@ -63,7 +63,7 @@ export default function Map({ reff, markerType }: MapProps) {
             latitude: driver.location.latitude,
             longitude: driver.location.longitude,
           }}
-          destination={pickedLocation}
+          destination={rideIsStarted ? dropLocation : pickedLocation}
         />
       )}
 

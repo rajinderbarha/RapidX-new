@@ -92,6 +92,10 @@ export default function RideContextProvider({ children }: PropsWithChildren) {
       setRideIsCompleted(false),
       setPaymentIsDone(false),
       setDriver(null);
+    setRideIsStarted(false);
+    setRideIsAccepted(false);
+    setDriverReachedLocation(false);
+    setRideId('');
   }
 
   const value = {

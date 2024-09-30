@@ -19,13 +19,14 @@ import { LocalAuthContext } from "../../store/LocalAuthContext";
 import { ProfileContext } from "../../store/ProfileContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import storeUserProfileData from "../../../util/userData";
+import phoneAuthentication, { verifyOtp } from "../../../util/authentication";
 
 export default function AuthScreen() {
   const [countryCode, setCountryCode] = useState<string>("+91");
   const [phoneNumberInput, setPhoneNumberInput] = useState<string>("");
   const [phNumber, setPhNumber] = useState<string>("");
   const [otp, setOtp] = useState("");
-
+  const [otpSent, setOtpSent] = useState(false);
   // const {confirm,confirmOtp,signInWithPhoneNumber,signOut,user} =useContext(AuthContext)
   const { setToken, token } = useContext(LocalAuthContext);
   const {
@@ -91,6 +92,42 @@ export default function AuthScreen() {
     }
   }
 
+  async function sendOtpHandler() {
+    if (validatePhoneNumber(countryCode, phoneNumberInput)) {
+      try {
+        await phoneAuthentication(phoneNumberInput).then(() => {
+          Alert.alert("OTP sent successfully", "Please enter the OTP");
+          setOtpSent(true);
+        });
+      } catch (error) {
+        console.error("Error sending OTP", error);
+      }
+    }
+  }
+
+  const handleConfirmOtp = async () => {
+    try {
+      const responseData = await verifyOtp(
+        phoneNumberInput,
+        otp,
+        setIsNewUser,
+        setIsProfileCompleted
+      );
+      await storeUserProfileData({
+        firstName: responseData.user.firstName,
+        lastName: responseData.user.lastName,
+        email: responseData.user.email,
+        phoneNumber: phNumber,
+      });
+      const receivedToken = responseData.token;
+      setToken(receivedToken);
+
+      Alert.alert("Logging You In");
+    } catch (error) {
+      console.log("Invalid code. otp");
+    }
+  };
+
   // const handleConfirmOtp = async () => {
   //   try {
   //      confirmOtp(otp);
@@ -114,7 +151,7 @@ export default function AuthScreen() {
             />
           </View>
           {/* !confirm && !user &&  */}
-          {
+          {!otpSent &&
             <View style={styles.formContainer}>
               <Text style={styles.label}>Enter Your Mobile Number</Text>
               <View style={styles.inputContainer}>
@@ -135,10 +172,11 @@ export default function AuthScreen() {
                   onChangeText={(text) => setPhoneNumberInput(text)}
                 />
               </View>
+              
             </View>
           }
 
-          {/* {confirm && !user && (
+          {otpSent && (
             <View style={styles.formContainer}>
               <Text style={styles.label}>Enter Your OTP</Text>
               <View style={styles.inputContainer}>
@@ -150,11 +188,17 @@ export default function AuthScreen() {
                   onChangeText={(text) => setOtp(text)}
                 />
               </View>
+              <TouchableOpacity onPress={()=>setOtpSent(false)}><Text style={{color:'blue'}}>Retry</Text></TouchableOpacity> 
             </View>
-          )} */}
+          )}
         </View>
       </ScrollView>
-      <OrangeButton text={"Send"} onPress={handelSignIn} />
+
+      <OrangeButton
+        text={otpSent ? "Verify OTP" : "Send OTP"}
+        onPress={otpSent ? handleConfirmOtp : sendOtpHandler}
+      />
+
 
       {/* {!confirm && !user &&(
         <OrangeButton text={"Send"} onPress={handelSignIn} />
