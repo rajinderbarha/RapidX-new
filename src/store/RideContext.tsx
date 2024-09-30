@@ -32,6 +32,10 @@ interface RideInterface {
   resetRideData: () => void;
   isSocketConnected : boolean;
   setIsSocketConnected : (state : boolean)=>void
+  driverReachedLocation : boolean;
+  setDriverReachedLocation : (state : boolean)=>void
+  rideId : string;
+  setRideId : (state : string)=>void
 }
 
 export const RideContext = createContext<RideInterface>({
@@ -65,7 +69,11 @@ export const RideContext = createContext<RideInterface>({
   setRideIsAccepted : ()=>{},
   resetRideData: () => {},
   isSocketConnected : false,
-  setIsSocketConnected : ()=>{}
+  setIsSocketConnected : ()=>{},
+  rideId : '',
+  setRideId : ()=>{},
+  driverReachedLocation : false,
+  setDriverReachedLocation : ()=>{}
 });
 
 export default function RideContextProvider({ children }: PropsWithChildren) {
@@ -76,6 +84,8 @@ export default function RideContextProvider({ children }: PropsWithChildren) {
   const [rideIsStarted, setRideIsStarted] = useState(false);
   const [rideIsAccepted, setRideIsAccepted] = useState(false);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
+  const [driverReachedLocation, setDriverReachedLocation] = useState(false);
+  const [rideId, setRideId] = useState('');
 
   function resetRideData() {
     setRideIsBooked(false),
@@ -99,7 +109,11 @@ export default function RideContextProvider({ children }: PropsWithChildren) {
     rideIsAccepted,
     setRideIsAccepted,
     isSocketConnected,
-    setIsSocketConnected
+    setIsSocketConnected,
+    rideId,
+    setRideId,
+    driverReachedLocation,
+    setDriverReachedLocation
   };
 
   return <RideContext.Provider value={value}>{children}</RideContext.Provider>;

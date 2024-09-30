@@ -30,10 +30,28 @@ import socket from "../../../util/socket";
 
 const { height } = Dimensions.get("screen");
 
+
+interface  driver {
+  _id: string,
+  phone_number: number,
+  first_name: string,
+  last_name : string ,
+  email: string,
+  gender: string,
+  profile_picture: string,
+  rating: number,
+  vehicle_image: string,
+  vehicle_plate: string,
+  vehicle_type: string,
+  location : {
+    latitude : number,
+    longitude : number
+  }
+} 
+
 export default function MainScreen() {
   const navigation = useNavigation() as any;
   const { location, reset } = useContext(LocationContext);
-  const { setRideIsBooked, setDriver } = useContext(RideContext);
   const { isProfileCompleted } = useContext(ProfileContext);
   const {
     rideIsBooked,
@@ -41,6 +59,11 @@ export default function MainScreen() {
     paymentIsDone,
     setRideIsCompleted,
     driver,
+    setRideIsBooked,
+    setDriver,
+    setRideIsAccepted,
+    rideIsAccepted,
+    driverReachedLocation
   } = useContext(RideContext);
   const mapRef = useRef<MapView>(null);
   const [buttonBottomPosition, setButtonBottomPosition] = useState(20);
@@ -53,7 +76,6 @@ export default function MainScreen() {
   //   }
   // }, [useIsFocused, isProfileCompleted]);
 
-
   // if(!isProfileCompleted){
   //   navigation.replace("Profile");
   // }
@@ -65,30 +87,49 @@ export default function MainScreen() {
 
   useEffect(() => {
     if (socket) {
-      socket.on('rideCancelled', (data) => {
+      socket.on("rideCancelled", (data) => {
         console.log(data.message);
-        console.log('Ride was cancelled by:', data.cancelledBy);
+        console.log("Ride was cancelled by:", data.cancelledBy);
         setRideIsBooked(false);
         reset();
         setDriver(null);
         Alert.alert(`Ride was cancelled by ${data.cancelledBy}`);
       });
 
+      socket.on('driverReachedUser', (data)=>{
+        console.log('driver has reached location');
+        Alert.alert('Driver Arrived', 'Driver has reached your location');
+      })
+
       // Cleanup
       return () => {
-        socket.off('rideCancelled');
+        socket.off("rideCancelled");
       };
     }
   }, [socket]);
-  
 
+  useEffect(() => {
+    socket.on("driverLiveLocationUpdate", (newLocation) => {
+      if (rideIsAccepted &&driver && newLocation.lat && newLocation.lng) {
+        setDriver((prevDriver : driver) => ({
+          ...prevDriver,
+          location: {
+            latitude: newLocation.lat,
+            longitude: newLocation.lng,
+          },
+        }));
+      } else {
+        console.error("Driver is not initialized or location data is invalid.");
+      }
+    });
+    
+  }, [rideIsAccepted]);
+  // {lat: 30.70248106104791, lng: 76.70058779418468}
 
   const handleModalChange = useCallback((index: any) => {
     const modalHeight = index === 0 ? 0.3 : 0.6; // Update according to your snap points
     setButtonBottomPosition(modalHeight * height + 20); // Adjust button position based on modal height
   }, []);
-
-  
 
   function myLocationButtonHandler() {
     if (location && mapRef.current) {
@@ -126,7 +167,7 @@ export default function MainScreen() {
       {rideIsBooked && driver && (
         <OnBookedRideModal onChange={handleModalChange} isFocused={isFocused} />
       )}
-      {rideIsCompleted && !paymentIsDone &&(
+      {rideIsCompleted && !paymentIsDone && (
         <OnFinishRideModal onChange={handleModalChange} isFocused={isFocused} />
       )}
       {paymentIsDone && (

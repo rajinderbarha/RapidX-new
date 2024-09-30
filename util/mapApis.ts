@@ -89,7 +89,7 @@ export default async function MapData(userData : mapDataInterface) {
   return;
 }
 
-export async function fetchFare(distance: number, duration: number) {
+export async function fetchFare(distance: number, duration: number, userId : string) {
   const URL =
     SERVERURL+"/api/users/calculate-fares";
   const token = await fetchToken()
@@ -102,7 +102,7 @@ export async function fetchFare(distance: number, duration: number) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user_id: "66c86a37541aed473d0d49b6",
+        user_id: userId,
         distance: distance,
         duration: duration,
       }),

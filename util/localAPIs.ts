@@ -65,15 +65,17 @@ export async function fetchToken() {
     console.log("error fetching token : ", error);
   }
 }
-export async function fetchUserId() {
+export async function fetchUserId(): Promise<string | null> {
   try {
     const userId = await AsyncStorage.getItem("userId");
     if (userId) {
-      console.log("got Id", userId );
-      return userId;
+      console.log("got Id", userId);
+      return userId; // userId is a string if it exists
     }
+    return null; // if userId doesn't exist, return null
   } catch (error) {
     console.log("error fetching userId : ", error);
+    return null; // return null in case of error
   }
 }
 

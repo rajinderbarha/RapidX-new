@@ -43,6 +43,7 @@ export default function ConfirmLocationModal({
     setDriver,
     rideIsAccepted,
     setRideIsAccepted,
+    setRideId
   } = useContext(RideContext);
   const { firstName } = useContext(ProfileContext);
   // const {requestRide, driverDetails} = useSocket()
@@ -101,13 +102,14 @@ export default function ConfirmLocationModal({
         console.log("Ride Booked:", data);
       });
 
-      socket.on("rideConfirmed", (driverDetails) => {
-        console.log("Ride confirmed:", driverDetails);
-        if (!driverDetails) {
+      socket.on("rideConfirmed", (riderDetails) => {
+        console.log("Ride confirmed:", riderDetails);
+        if (!riderDetails) {
           setRideIsBooked(false);
           return;
         }
-        setDriver(driverDetails?.driverDetails);
+        setDriver(riderDetails?.driverDetails);
+        setRideId(riderDetails.rideId)
         setRideIsAccepted(true);
       });
     }

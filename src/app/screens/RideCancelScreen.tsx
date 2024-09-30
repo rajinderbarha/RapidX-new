@@ -13,10 +13,12 @@ import OrangeButton from "../../ui/OrangeButton";
 import { RideContext } from "../../store/RideContext";
 import { LocationContext } from "../../store/LocationContext";
 import { useNavigation } from "@react-navigation/native";
+import socket from "../../../util/socket";
 
 
 export default function RideCancelScreen() {
   const [reason, setReason] = useState("");
+  const {rideId} = useContext(RideContext)
 
   const reasons = [
     { label: "Can't find rider", value: "Can't find rider" },
@@ -40,6 +42,10 @@ export default function RideCancelScreen() {
     }
     // Handle the ride cancellation logic here
     Alert.alert("Ride cancelled", `reason : ${reason}`);
+    socket.emit("cancelRide", {
+      rideId: rideId,
+      cancelledBy: "user",
+    });
     setRideIsBooked(false);
     reset();
     setDriver(null);
